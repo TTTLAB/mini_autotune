@@ -41,6 +41,10 @@
 - 不用桌面自动化点 GUI，不手改工程文件，不在 EDA 之外伪造网表/BOM。
 - 操作前确认目标工程与版本；不确定就停下来问（headless 时按最安全路径并在报告里注明假设）。
 
+## 交付要求（每轮原理图迭代收尾）
+
+- 每轮原理图迭代收尾时，用 jlceda（invoke 带 `--ext-uuid eda`）把整个工程导出为 `.epro`，命名为 `mini_autotune_<SCHEMATIC_PLAN 版本号>_<YYYYMMDD>-<HHMM>.epro`（例：`mini_autotune_v0.3_20261117-2145.epro`），先写到 APP_PROJECT_DIR，再复制进 `hw/exports/`；在磁盘上核对文件存在且大小 >0，与 PNG 一起 commit，然后 `git push origin main`（不准 force）。旧版本 `.epro` 保留不删。单个文件超过 50MB 先停下回报，不准推送。
+
 ## 文件与备份
 
 - **本仓库以 git 管理，不准生成 .bak 文件。** 每项任务动手前先 `git status` 确认工作区干净（不干净先提交），完成后提交一次，提交信息写清改了什么。改坏了用 `git diff` / `git checkout -- <文件>` 恢复。只有仓库外、git 管不到的文件（如 `~/.claude` 下）才做带时间戳备份。
