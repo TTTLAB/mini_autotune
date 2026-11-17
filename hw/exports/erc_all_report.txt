@@ -1,8 +1,15 @@
-mini_autotune 全局 ERC 报告  2026-11-18
-总计：error = 0；warn = 4（全部为 NETOBJECTONGRID，均在 HMI 页 LED1）
-逐条：
-- warn NETOBJECTONGRID ×4 —— LED1(GL5050RGB01-A/C51933351) 符号引脚坐标非 10 栅格（x 偏移 ±19/21 等），网络标签已对齐栅格但引脚端点非栅格；属库符号栅格属性问题，非电气短路/浮空，不影响网表连接。
-- 其余三页：电源 0、主控 0、音频 0。
-结论：电气错误 0；仅 LED 符号栅格告警 4 条，可解释。
-阶段F 修复后复核（2026-11-18）：仍 error 0 / warn 4；网络已更名为 LED_RA/LED_GA/LED_BA，4 条 NETOBJECTONGRID 同为 LED1 引脚非 10 栅格，未新增错误。
-E 完成后复核（2026-11-18）：音频 SD_MODE 以短导线直连 R6.2↔R7.1（网表确认同一 SD_MODE），全局仍 error 0 / warn 4（均 HMI LED 引脚非栅格），未新增错误。
+全局原理图 ERC 报告 — G1.2 库器件对齐后（2026-11-18 03:22）
+工程：mini_autotune（Main，4 页：电源 / 主控 / 音频 / 人机交互）
+检查方式：sch_Drc.check(strict=true, UI=false, verbose=true)；逐页激活后汇总（作用于整册 Main）
+
+结果：
+  error         = 0
+  ATTRMATCHCODE = 0（已清零）
+  warn          = 4，逐条：
+    [1] NETOBJECTONGRID  sheet=人机交互  网络=GND
+    [2] NETOBJECTONGRID  sheet=人机交互  网络=LED_BA
+    [3] NETOBJECTONGRID  sheet=人机交互  网络=LED_RA
+    [4] NETOBJECTONGRID  sheet=人机交互  网络=GND
+
+解释：4 条均为 LED1(GL5050RGB01-A) 库符号引脚不在 10mil 栅格上，导致网络标签落点非栅格；纯图形栅格提示，不涉及连接/短路错误，与 G1 基线一致（非本轮引入）。
+补充：J1 SBU1/SBU2(A8/B8) 已加「非连接」标志；TP1/TP2 已 DNP；CHECKFLOATPIN 已消除。

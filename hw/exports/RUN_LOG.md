@@ -125,3 +125,43 @@
 - REVIEW_NOTES：第 5 问改为「按键仅靠 ESP32 内部上拉 + 单路 TVS，抗 ESD 和抗干扰是否足够？」；新增第 6 问「BOM 中是否有更常用、好买的替代料？」；新增「工程师初评：通过，待其最终人工矫正」节。
 - 导出 mini_autotune_v0.5_20261118-0302.epro、四页 PNG、整册 PDF；commit+push。**未开始 PCB**。
 
+## 2026-11-18 G1.2 ｜ 库器件对齐（符号+封装一起换）— 完成（未开始 PCB）
+
+执行方式：每类器件按「系统库按立创料号取库器件 → 换符号+封装 → 网表逐脚比对（要求 PIN DIFF 空）→ 记新旧封装名+焊盘数」执行。
+- 取库器件：`lib_Device.getByLcscIds / searchByProperties`；系统库 UUID=`0819f05c4eef4c71ace90d822a990e87`（由 `lib_LibrariesList.getSystemLibraryUuid` 取得）。
+- `sch_SourcePrimitiveComponent.replace()` 有几何容差（符号外框宽度偏差 >5% 即 REPLACE_REJECTED）：C14/U1/K/J1 均被拒。故除 J2 外改用「remove(withWires=true) + add(系统库器件) + 短导线+网络标签」全量重连；J2 新旧符号几何一致，replace() 直接成功且连接保持。
+
+### 各类结果（旧 → 新；封装名 / 焊盘数；引脚比对）
+| 器件 | 旧器件/符号 | 旧封装(焊盘) | 新器件/符号(立创料号) | 新封装(焊盘) | 引脚比对 |
+|---|---|---|---|---|---|
+| U1 | AMS1117-3.3_C2891839 | SOT-223-3_L6.5-W3.4-P2.30-LS7.0-BR (4) | AMS1117-3.3_C6186 (C6186) | SOT-223-3_L6.5-W3.4-P2.30-LS7.0-BR (4) | 1=GND,2=VOUT,3=VIN,4=VOUT(tab)；网 GND/+3V3/+5V/+3V3 不变，PIN DIFF 空 |
+| J1 | TYPE-C-16PIN（17 数字脚号） | USB-TYPE-C-SMD_{{SECRET_qblwnxit}} (20) | TYPE-C16PIN (C393939) | USB-C-SMD_TYPE-C16PIN (16) | 复合脚号按功能重挂，功能级 PIN DIFF 空（见下） |
+| J2 | PH2.0-2P_C9900095162 | CONN-TH_2P-P2.00_BOSSIE_BX-PH2.0-2PZZ (2) | BX-PH2.0-2PZZ-Y (C22388468) | CONN-TH_2P-P2.00_HC-PH-2A-TW (2) | 1=SPK_P,2=SPK_N 不变，PIN DIFF 空 |
+| K1–K9 | TS-1809-T20 | SW-SMD_L3.9-W2.9-LS4.8SWQC_SPST (2) | TS50610-411-02028 (C42400866) | KEY-SMD_L3.9-W3.0-LS5.0_1 (2) | 1=KEY1..9,2=GND；9/9 全一致，PIN DIFF 空 |
+| C14 | 1UF±10%100VX7R-0603 | C0603 (2) | CL10B105KA8NNNC (C29936) | C0603 (2) | 1=EN,2=GND 不变，PIN DIFF 空 |
+| SW1/SW2 | TS-1088-AR03016 | SW-SMD_L3.9-W3.0_TS-1088-AR02026 (2) | **系统库取不到 C56165515** | 保留原器件 | 跳过（见下） |
+
+### J1 引脚功能映射（USB-C：脚号由数字改为复合焊盘号）
+- 旧脚(名→网)：1/8/9/16=GND→GND；2/7/10/15=VBUS→VBUS_IN；3=CC1→CC1；4=DP1→USB_DP；5=DN1→USB_DM；6=SBU1→NC；11=CC2→CC2；12=DP2→USB_DP；13=DN2→USB_DM；14=SBU2→NC；17=EH(屏蔽)→GND。
+- 新脚(复合名→网)：A1B12/B1A12(GND)→GND；A4B9/B4A9(VBUS)→VBUS_IN；A5(CC1)→CC1；A6(DP1)→USB_DP；A7(DN1)→USB_DM；A8(SBU1)=NC；B5(CC2)→CC2；B6(DP2)→USB_DP；B7(DN2)→USB_DM；B8(SBU2)=NC；1/2/3/4(SHELL)→GND。
+- 按功能重挂网络标签后重比网表：功能级 PIN DIFF 空（GND/VBUS/SHELL 旧多脚=新复合脚，网络相同；SBU1/SBU2 保持 NC 并加「非连接」标志）。旧脚名/新脚名均有明确功能对应，未做任何猜测。
+
+### SW1/SW2 跳过（按规则记录，不猜）
+- C56165515 在系统库取不到：getByLcscIds / search / searchByProperties({supplierId:'C56165515'}) 均返回空。系统库同名器件 TS-1088-AR03016 的真实料号为 **C9900285271**（≠C56165515）。
+- 按任务规则「取不到就记 RUN_LOG，保留原器件，跳过」：本轮保留 SW1/SW2 原符号/封装不动。**待确认**：BOM 属性 C56165515 与该符号真实料号不一致，需核实。
+
+### TP1/TP2 → DNP（不贴装，保留焊盘）
+- 原符号/封装为自建 TP-黄色测试点 / TESTPOINT-TH_BD3.2，与所挂料号 C5272786 的真实库器件 Keystone 5123（符号 5123 / 封装 TP-TH_5123 / 1 焊盘）不一致 → 触发 ATTRMATCHCODE。
+- 已改为真实库器件 5123 的符号/封装（1 焊盘，数量不变、保留焊盘），并置 Add into BOM=no（DNP，不贴装，BOM 排除）。网络 U0TXD/U0RXD 保持。
+
+### 全局 ERC（G1.2 后）
+- **error 0**；**ATTRMATCHCODE 0（已清零）**；残余 warn 4 条，全部 NETOBJECTONGRID（人机交互页 LED1 引脚非 10 栅格，纯图形栅格提示、非电气；与 G1 基线一致）。详见 erc_all_report.txt。
+
+### 交付物（v0.6，2026-11-18 03:22）
+- BOM_v0.6_20261118-0322.csv：板内 24 条料号 + 板外喇叭 1 条；单价/库存/来源 URL 均填（国内 szlcsc ¥价待确认）；已明确合计 ≈**¥79.11**（USD 10.9882，按 1USD≈7.2 估算）< ¥100，预算内；待确认 3 条（C2940049/C252436/C2889398）均为低价无源件。
+- mini_autotune_v0.6_20261118-0322.epro（128909B）。
+- 四页 PNG：power_page.png / main_page.png / audio_page.png / hmi_page.png（整册 3000px 宽导出拆分）。
+- 整册 PDF：sch_all_v0.6_20261118-0322.pdf。
+- 局部放大 PNG：power_page_J1_zoom_v06.png、power_page_U1_zoom_v06.png、hmi_page_K1_zoom_v06.png、audio_page_J2_zoom_v06.png、main_page_C14_zoom_v06.png。
+- **未开始 PCB**。
+
