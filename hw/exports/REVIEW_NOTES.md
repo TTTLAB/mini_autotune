@@ -148,3 +148,22 @@
 - **.epro 限制**：当前安装的嘉立创 EDA（V4.1.100）jlceda MCP **未暴露单文件 .epro 工程导出 API**（getExportDocumentFile 仅支持 PDF/PNG/SVG；无项目打包函数，调用 EPRO 一律超时）。故本轮交付的 mini_autotune_v0.7_*.epro 为**当前 .eprj3 设计文件夹的 ZIP 归档**（解压后为文件夹工程）；如需规范单文件 .epro，请在 GUI「文件→导出」生成。PDF/四页PNG/网表/BOM 均由 API 正常导出。
 
 
+## G1.4 落实（2026-11-18）
+
+### 电容返工（G1.3 按旧规则改多的回收）
+- C1/C5/C7/C10/C15：改回 10µF MLCC C15850（C0805 X5R 25V，≥16V）。
+- C27（U1 输入）/C28（U1 输出）：改 22µF MLCC C45783（C0805 X5R 25V）。依据 TPS563201 SLVSD90：输入 ceramic over 10 µF + 0.1µF（§7.2.2.4, p.15）；输出 C8+C9 推荐 20–68µF，示例 2×22µF（Table 7-2, p.14–15）。本设计 C27=22µF、C28=22µF。待确认：是否按示例加到 2×22µF。
+- C4 保持 22µF 钽 16V（+3V3，>10µF 用钽，耐压16V≥10V）；网表 pin1=+3V3 电源侧，极性正确。
+- R14 与 C28 网络标签文字重叠：旋转 R14 侧 GND 标签 180° 消除重叠（不改连接）。
+
+### 麦克风换 ICS-43434（方案 A，C5656610）
+- U3：INMP441(C574021) → ICS-43434(C5656610)，符号/封装/料号三者一致（MIC-SMD_6P-L3.5-W2.7-P0.90-BL）。
+- 引脚按 DS-000069 Rev1.0 p.10 Table 8：1 WS / 2 LR / 3 GND / 4 SCK / 5 VDD / 6 SD。接线：WS→I2S_MIC_WS、LR→GND(左声道)、GND→GND、SCK→I2S_MIC_BCLK、VDD→+3V3_A、SD→I2S_MIC_SD。I2S 网络名与 ESP32 GPIO 不变（网表：I2S_MIC_WS=U2.5+U3.1、I2S_MIC_BCLK=U2.4+U3.4、I2S_MIC_SD=U2.6+R4.1+U3.6）。
+- VDD 去耦：C8/C9 100nF + C7 10µF（手册 p.10 要求 0.1µF，满足）。SD 100k 下拉：R4（手册 p.15，满足）。
+- PCB 阶段注意：ICS-43434 为底部进音，PCB 麦克风下方需开声孔，最小直径 0.5mm（手册 p.17），留 PCB 阶段。
+- 风险：立创库 C5656610 标注"停产"；方案 A 由鼠王已定，采购需复核供货。
+
+### 遗留
+- ERC 明细在 headless 下不可取得（见 RUN_LOG G1.4「Not tried」），待人工激活页面复核。
+- C27/C28 是否加到 2×22µF 待确认。
+

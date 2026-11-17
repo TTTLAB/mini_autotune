@@ -182,3 +182,35 @@
 - **收尾**：ERC error 0（warn 5 逐条解释，erc_all_report.txt）；BOM_v0.7 立创合计≈¥76.26<¥100；四页 PNG + 整册 PDF + 局部放大 PNG + 网表证明；.epro 因当前 EDA 无单文件导出 API，交付设计文件夹 ZIP 归档（已注明）。**未开始 PCB**。
 
 
+## G1.4 落实（2026-11-18，分支 g1.4，基线 main 8d90dc5）
+
+### 完成
+- 步骤0 备份与分支：eprj3 索引备份 mini_autotune.eprj3.bak_20261118-035320；sch 目录快照 sch_bak_20261118-035356.tar.gz（工程外，可恢复）；git checkout -b g1.4。
+- 步骤1 CLAUDE.md 追加「验证铁律/画图规范/器件规范/版本与会话」四组规则，单独 commit（a8bb168）。
+- 步骤2 tools/check.sh 由本机 Claude CLI 编写；DSH 复核 bash -n 通过并实跑，生成 hw/exports/check/check_20261118-040858.md（PNG sha256 对比 / 网表 diff / 器件清单三节）。
+- 步骤3 电容返工（钽→MLCC / 按 TPS563201 手册）：
+  - C1/C5/C7/C10/C15：22µF 钽（C782264）→ 10µF MLCC C15850（C0805，X5R，25V）。规则 ≤10µF 用 MLCC、耐压≥16V，满足。
+  - C27（U1 输入）/C28（U1 输出）：22µF 钽 → 22µF MLCC C45783（C0805，X5R，25V）。依据 TPS563201 数据手册 SLVSD90 §7.2.2.4 输入电容(p.15)：ceramic over 10 µF + 0.1µF；§7.2.2.3 输出滤波(p.14–15, Table 7-2)：Vout=3.3V 时 C8+C9 推荐 20–68 µF，手册示例用两颗 22µF(44µF)。本设计 C27=22µF(>10µF) 满足输入；C28=22µF 落在 20–68µF 下限。待确认：若严格照示例 44µF 需再加一颗 22µF（本步未加）。
+  - C4 保持 22µF 钽 16V（+3V3）；网表 pin1=+3V3（电源侧），极性正确（zoom_power_C1_C4.png 符号左侧 +)。
+  - 修 R14 与 C28 附近网络标签重叠：将 R14 右侧 GND 网络标签旋转 180°（仅挪显示，不改连接）；zoom_power_U1_C27_C28.png 复看无重叠、位号可见。
+- 步骤4 麦克风换 ICS-43434（C5656610，鼠王方案 A）：U3 由 INMP441(C574021) 换为 ICS-43434(C5656610)，符号+封装+料号三者一致（MIC-SMD_6P-L3.5-W2.7-P0.90-BL）。按手册 DS-000069 Rev1.0 p.10 Table 8 引脚：1=WS、2=LR、3=GND、4=SCK、5=VDD、6=SD。接线：WS→I2S_MIC_WS、LR→GND(左声道)、GND→GND、SCK→I2S_MIC_BCLK、VDD→+3V3_A、SD→I2S_MIC_SD；I2S 网络名与 ESP32 GPIO 全部不变。VDD 去耦 C8/C9 100nF + C7 10µF（手册 p.10 要求 0.1µF，满足）；SD 100kΩ 下拉沿用 R4（手册 p.15，满足）。底部进音，PCB 声孔最小直径 0.5mm（手册 p.17），留 PCB 阶段。
+
+### 网表 / 图证据
+- 本版网表：hw/exports/netlist_v08_20261118-040633.json。
+- v07→v08 网表 diff（hw/exports/check/netlist_diff_v08_20261118-040641.md）：器件 +0/-0；引脚网络改动 6 条，全部为 U3 引脚编号自旧 INMP441 重映射（新网络 0/消失网络 0，逻辑网络集合不变）；单引脚悬空网络 v07=0、v08=0。
+- 电容两端网络核对：C1 +5V/GND、C5 VBUS_IN/GND、C7 +3V3_A/GND、C10 +5V/GND、C15 +3V3/GND、C27 +5V/GND、C28 +3V3/GND、C4 +3V3/GND(pin1=+3V3)。全部与改前一致。
+- PNG 哈希：电源/主控/音频 有变，人机交互 未变（与改动范围一致）。
+
+### 步骤5 一致性核对
+- 已导出 hw/exports/check/parts_20261118-0410.csv（位号,立创料号,符号名(器件名),封装名,焊盘数,页面，共 64 件）。
+- 3 个 Claude CLI 只读子任务 A/B/C（电源+主控 / 音频 / 人机交互）逐个位号核对，输出 consistency_A/B/C.md；另起未参与 A/B/C 的复核子任务 R 抽查全部 FAIL/UNSURE 与极性件，输出 consistency_review.md；汇总 consistency_summary_20261118.md。结果见这些文件。
+
+### 收尾导出 v0.8
+- BOM_v0.8_20261118-040919.csv；四页 PNG（power/main/audio/hmi_page_v08.png）；整册 PDF（mini_autotune_v0.8_20261118-0410.pdf）；.epro 以设计文件夹 ZIP 归档（mini_autotune_v0.8_20261118-0410.epro.zip，325KB；当前 EDA 无单文件 .epro 导出 API）；放大图 zoom_power_U1_C27_C28 / zoom_power_C1_C4 / zoom_power_C5 / zoom_audio_C7_C10 / zoom_audio_U3_mic / zoom_main_C15（均含位号）。
+
+### Not tried / 未验证（如实）
+- ERC 明细未取得：headless 会话中 SCH_Drc.check 的 includeVerboseError 被 API schema 限制为 false；strict:false 布尔门禁对未改动页（主控/人机交互）也返回 false，判定 headless 下 DRC 未真正执行/不可信。故 ERC error/warn 计数与逐条解释 = Not tried，待激活页面人工复核。已改用网表级连通性核对（无新增/消失网络、无悬空单引脚、电容两端网络不变）作替代证据。
+- C27/C28 是否按手册示例加到 2×22µF(44µF)：待鼠王/工程师确认。
+- ICS-43434 料号 C5656610 在立创库标注 "1.65V~3.63V 停产"：参数满足方案 A，但供货状态存疑，需鼠王确认采购。
+- 未开始 PCB（不越阶段门）。
+

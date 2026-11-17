@@ -1,3 +1,5 @@
 .DS_Store
 *.bak*
 
+.dsh_tmp/
+.dsh_tmp_*.txt
