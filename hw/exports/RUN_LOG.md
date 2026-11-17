@@ -292,3 +292,8 @@
 - 步骤2 新建 hw/exports/G1_HANDOFF.md（给人类工程师）：①版本/分支/commit/交付物；②工程师 7 条意见落实对照表（含 G1.4/G1.5 演进：麦克风换 ICS-43434、电容规则按新规调整）；③待工程师确认 7 条；④淘宝采购件清单；⑤已知未验证(ERC)；⑥合并前状态与合并命令草案。引用 REVIEW_NOTES/RUN_LOG/docs/REVIEWS 不抄全文。
 - 步骤3 合并前检查（只检查未合并）：git diff --stat main...g1.4 = 61 files changed, +18116/-0；rev-list main...g1.4 = 0/6（g1.4 领先 6 commit）；工作区干净；g1.4 == origin/g1.4。合并命令草案（未执行）：git checkout main && git merge --no-ff g1.4 && git push origin main。
 - Not tried：全工程 ERC 明细（待鼠王可见窗口跑 DRC，不声称 error0）；C15850/C45783/C252436/TP 等单价待确认。
+
+### 合并到 main（G1.7 收尾）
+- 执行：git checkout main → git pull --ff-only（Already up to date）→ git merge --no-ff g1.4 -m "Merge G1 schematic v1.0 (g1.4) for engineer review" → **合并提交 8af1bd6**（ort 策略，无冲突）→ git push origin main（8d90dc5..8af1bd6）。
+- 保留 g1.4 分支（df45695，origin/g1.4 同）。main 现为 G1 原理图 v1.0。
+- ERC 仍由工程师在可见窗口确认（见 G1_HANDOFF.md §5 / G1_CHECKLIST.md §D）；本仓未声称 error 0。
