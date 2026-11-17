@@ -295,4 +295,4 @@ pdftotext .dsh_tmp/tps563201.pdf - | grep -n -i "layout"  # 定位 SLVSD90 Layou
 - 器件核对：PCB2 `getAll()=66`，与原理图 66 件一致；**无 TVS**、`FB1` 单只、含 **C17–C30**（G1 v1.0）。
 - 分区粗摆放（板 0..80×0..50 mm）：电源区 J1/U1/L1/D1/FB1/C1–C4/C6/C16/C26–C29/R13–R15；主控区 U2/C5/C14/C15/R1/R2；音频区 U3/U4/J2/C7–C11/C30/R3–R9；交互区 K1–K9/C17–C25/LED1/R10–R12/SW1/SW2/TP1/TP2。器件外廓 bbox ≈ (2.9,3.2)–(75.4,47.5) mm，均在板框内；**未走线**。
 - 导出图：`hw/exports/pcb/pcb2_top_v1_2026111722143.png`（顶层，含位号）、`pcb2_bottom_v1_2026111722143.png`（底层，仅铜/焊盘；全贴片在顶层，底层无位号）。
-- 手册：已下载 `hw/datasheets/{tps563201.pdf, esp32-s3-wroom-1.pdf, ics-43434.pdf}`；**页码仍待核对**（headless 无 PDF 文本引擎）。天线净空取值以模组手册为准、待确认。
+- 手册：已下载 `hw/datasheets/tps563201.pdf`(SLVSD90,30 页)、`esp32-s3-wroom-1.pdf`(53 页)；ICS-43434(DS-000069) 源站反爬未能下载（详见 `hw/datasheets/README.txt`）。**页码仍待核对**（headless 无 PDF 文本引擎）。天线净空取值以模组手册为准、待确认。
