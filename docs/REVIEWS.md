@@ -281,3 +281,5 @@ AI 提交评审包
 - 遗留：ERC 明细待人工复核；C27/C28 是否 2×22µF 待确认；C5656610 供货（停产标记）待鼠王确认。
 - 结论：待预审/终审，未开始 PCB。
 
+
+> 更正：G1.4 §9 的多agent A/B/C/R 报告因 subagent max_turns 上限未产出；实际以 hw/exports/check/consistency_summary_20261118.md（parts csv 机械核对 + 改动件手册核对，OK9/UNSURE55/FAIL0）为准，全件深度手册核对列为未完成。

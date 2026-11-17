@@ -167,3 +167,6 @@
 - ERC 明细在 headless 下不可取得（见 RUN_LOG G1.4「Not tried」），待人工激活页面复核。
 - C27/C28 是否加到 2×22µF 待确认。
 
+
+### 步骤5 更正
+- A/B/C 并行子任务因 max_turns 上限未产出报告，R 未启动；改为 parts.csv 机械核对 + 改动件手册核对，见 hw/exports/check/consistency_summary_20261118.md（OK9/UNSURE55/FAIL0）。全 64 件逐件深度手册核对未完成（Not done）。

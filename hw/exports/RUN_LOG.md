@@ -214,3 +214,8 @@
 - ICS-43434 料号 C5656610 在立创库标注 "1.65V~3.63V 停产"：参数满足方案 A，但供货状态存疑，需鼠王确认采购。
 - 未开始 PCB（不越阶段门）。
 
+
+### 步骤5 更正（2026-11-18 04:13）
+- 3 个并行 Claude CLI 子任务 A/B/C 均因联网检索 datasheet 在 max_turns=30 内未完成并退出，**未产出 consistency_A/B/C.md**；复核 R 未启动。
+- 已改为：parts.csv 机械核对（BOM料号=网表同源一致）+ G1.4 改动件逐件手册核对，汇总见 hw/exports/check/consistency_summary_20261118.md（OK 9 / UNSURE 55 / FAIL 0）。
+- **逐件深度手册核对（全 64 件）本轮未完成 — Not done**，建议下一会话独立实例补做 A/B/C/R。
