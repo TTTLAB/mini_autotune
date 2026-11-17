@@ -182,3 +182,113 @@
 - **收尾**：ERC error 0（warn 5 逐条解释，erc_all_report.txt）；BOM_v0.7 立创合计≈¥76.26<¥100；四页 PNG + 整册 PDF + 局部放大 PNG + 网表证明；.epro 因当前 EDA 无单文件导出 API，交付设计文件夹 ZIP 归档（已注明）。**未开始 PCB**。
 
 
+## G1.4 落实（2026-11-18，分支 g1.4，基线 main 8d90dc5）
+
+### 完成
+- 步骤0 备份与分支：eprj3 索引备份 mini_autotune.eprj3.bak_20261118-035320；sch 目录快照 sch_bak_20261118-035356.tar.gz（工程外，可恢复）；git checkout -b g1.4。
+- 步骤1 CLAUDE.md 追加「验证铁律/画图规范/器件规范/版本与会话」四组规则，单独 commit（a8bb168）。
+- 步骤2 tools/check.sh 由本机 Claude CLI 编写；DSH 复核 bash -n 通过并实跑，生成 hw/exports/check/check_20261118-040858.md（PNG sha256 对比 / 网表 diff / 器件清单三节）。
+- 步骤3 电容返工（钽→MLCC / 按 TPS563201 手册）：
+  - C1/C5/C7/C10/C15：22µF 钽（C782264）→ 10µF MLCC C15850（C0805，X5R，25V）。规则 ≤10µF 用 MLCC、耐压≥16V，满足。
+  - C27（U1 输入）/C28（U1 输出）：22µF 钽 → 22µF MLCC C45783（C0805，X5R，25V）。依据 TPS563201 数据手册 SLVSD90 §7.2.2.4 输入电容(p.15)：ceramic over 10 µF + 0.1µF；§7.2.2.3 输出滤波(p.14–15, Table 7-2)：Vout=3.3V 时 C8+C9 推荐 20–68 µF，手册示例用两颗 22µF(44µF)。本设计 C27=22µF(>10µF) 满足输入；C28=22µF 落在 20–68µF 下限。待确认：若严格照示例 44µF 需再加一颗 22µF（本步未加）。
+  - C4 保持 22µF 钽 16V（+3V3）；网表 pin1=+3V3（电源侧），极性正确（zoom_power_C1_C4.png 符号左侧 +)。
+  - 修 R14 与 C28 附近网络标签重叠：将 R14 右侧 GND 网络标签旋转 180°（仅挪显示，不改连接）；zoom_power_U1_C27_C28.png 复看无重叠、位号可见。
+- 步骤4 麦克风换 ICS-43434（C5656610，鼠王方案 A）：U3 由 INMP441(C574021) 换为 ICS-43434(C5656610)，符号+封装+料号三者一致（MIC-SMD_6P-L3.5-W2.7-P0.90-BL）。按手册 DS-000069 Rev1.0 p.10 Table 8 引脚：1=WS、2=LR、3=GND、4=SCK、5=VDD、6=SD。接线：WS→I2S_MIC_WS、LR→GND(左声道)、GND→GND、SCK→I2S_MIC_BCLK、VDD→+3V3_A、SD→I2S_MIC_SD；I2S 网络名与 ESP32 GPIO 全部不变。VDD 去耦 C8/C9 100nF + C7 10µF（手册 p.10 要求 0.1µF，满足）；SD 100kΩ 下拉沿用 R4（手册 p.15，满足）。底部进音，PCB 声孔最小直径 0.5mm（手册 p.17），留 PCB 阶段。
+
+### 网表 / 图证据
+- 本版网表：hw/exports/netlist_v08_20261118-040633.json。
+- v07→v08 网表 diff（hw/exports/check/netlist_diff_v08_20261118-040641.md）：器件 +0/-0；引脚网络改动 6 条，全部为 U3 引脚编号自旧 INMP441 重映射（新网络 0/消失网络 0，逻辑网络集合不变）；单引脚悬空网络 v07=0、v08=0。
+- 电容两端网络核对：C1 +5V/GND、C5 VBUS_IN/GND、C7 +3V3_A/GND、C10 +5V/GND、C15 +3V3/GND、C27 +5V/GND、C28 +3V3/GND、C4 +3V3/GND(pin1=+3V3)。全部与改前一致。
+- PNG 哈希：电源/主控/音频 有变，人机交互 未变（与改动范围一致）。
+
+### 步骤5 一致性核对
+- 已导出 hw/exports/check/parts_20261118-0410.csv（位号,立创料号,符号名(器件名),封装名,焊盘数,页面，共 64 件）。
+- 3 个 Claude CLI 只读子任务 A/B/C（电源+主控 / 音频 / 人机交互）逐个位号核对，输出 consistency_A/B/C.md；另起未参与 A/B/C 的复核子任务 R 抽查全部 FAIL/UNSURE 与极性件，输出 consistency_review.md；汇总 consistency_summary_20261118.md。结果见这些文件。
+
+### 收尾导出 v0.8
+- BOM_v0.8_20261118-040919.csv；四页 PNG（power/main/audio/hmi_page_v08.png）；整册 PDF（mini_autotune_v0.8_20261118-0410.pdf）；.epro 以设计文件夹 ZIP 归档（mini_autotune_v0.8_20261118-0410.epro.zip，325KB；当前 EDA 无单文件 .epro 导出 API）；放大图 zoom_power_U1_C27_C28 / zoom_power_C1_C4 / zoom_power_C5 / zoom_audio_C7_C10 / zoom_audio_U3_mic / zoom_main_C15（均含位号）。
+
+### Not tried / 未验证（如实）
+- ERC 明细未取得：headless 会话中 SCH_Drc.check 的 includeVerboseError 被 API schema 限制为 false；strict:false 布尔门禁对未改动页（主控/人机交互）也返回 false，判定 headless 下 DRC 未真正执行/不可信。故 ERC error/warn 计数与逐条解释 = Not tried，待激活页面人工复核。已改用网表级连通性核对（无新增/消失网络、无悬空单引脚、电容两端网络不变）作替代证据。
+- C27/C28 是否按手册示例加到 2×22µF(44µF)：待鼠王/工程师确认。
+- ICS-43434 料号 C5656610 在立创库标注 "1.65V~3.63V 停产"：参数满足方案 A，但供货状态存疑，需鼠王确认采购。
+- 未开始 PCB（不越阶段门）。
+
+
+### 步骤5 更正（2026-11-18 04:13）
+- 3 个并行 Claude CLI 子任务 A/B/C 均因联网检索 datasheet 在 max_turns=30 内未完成并退出，**未产出 consistency_A/B/C.md**；复核 R 未启动。
+- 已改为：parts.csv 机械核对（BOM料号=网表同源一致）+ G1.4 改动件逐件手册核对，汇总见 hw/exports/check/consistency_summary_20261118.md（OK 9 / UNSURE 55 / FAIL 0）。
+- **逐件深度手册核对（全 64 件）本轮未完成 — Not done**，建议下一会话独立实例补做 A/B/C/R。
+
+## G1.5 落实（2026-11-18，分支 g1.4，基线 3debc4d）
+
+### 步骤0 后台清理 + 备份
+- G1.4 子任务：A(killed)、C(killed) 已停、B(completed，max_turns 无产出)；step1/check.sh 已完成 → 无运行中任务需再停。
+- G1.5 复核子任务：A2/B2/C2 启动后，A2/B2 因无 web 权限且耗时被中止，C2 完成；R2 未产出文件。均已停止/结束。
+- 备份：mini_autotune.eprj3.bak_20261118-043200；sch 快照 sch_bak_g15_20261118-043200.tar.gz。
+
+### 步骤1 小修 3 处（每处跑 tools/check.sh）
+1) C29：C28 旁新增第二颗 22µF MLCC（C45783，C0805 X5R 25V），+3V3/GND（TPS563201 SLVSD90 p.14–15 示例 2×22µF）。check_g15_fix1.md：器件 +1/-0、引脚0、网络 +0/-0。
+2) C30：U3 VDD(+3V3_A) 就近加 100nF MLCC（C14663，0603 X7R）到 GND；依据 DS-000069 R1.0 p.10（VDD 0.1µF）+ p.15（0.1µF X7R 靠近）。check_g15_fix2.md：器件 +1/-0、引脚0、网络 +0/-0。
+3) C26 处 EN_BUCK/VBST_NODE 标签重叠：两标签各旋转 90°（仅显示）。check_g15_fix3.md：器件0、引脚0、网络 +0/-0、PNG 电源变；zoom_C26_v09.png 无重叠。
+- 合计 check_g15_final.md：PNG 2变/2未变；器件 +2/-0（C29、C30）；引脚0；网络 +0/-0。
+
+### 步骤2 BOM
+- U3（ICS-43434 C5656610）标淘宝、不计立创价。立创合计（已知价）≈¥32.93（BOM_v0.9_20261118-043502.csv）；C15850×5/C45783×3/D1/R3/TP/L1 单价待确认未计入，淘宝件不计价。远低于 ¥100。
+
+### 步骤3 一致性核对（重跑，如实）
+- 仅核 55 个 UNSURE 件，拆 A(19)/B(18)/C(18)，max_turns=80 + 独立复核 R。
+- **关键限制：Claude CLI 子任务无 web 权限**，在线 datasheet 取不到 → 手册级项一律 UNSURE。C2 完成本地核对、B2 部分/本地核对完成、A2 中止无产出、R2 未写出文件。
+- 补：DSH 用网表+立创库做确定性本地交叉核对（consistency_local_all.md）：66 件，**真实料号不一致 FAIL=0**；封装名表述差异 4（C4/LED1/U2/U4，非冲突，待人工目视）；手册级全 UNSURE。汇总 consistency_summary_G15.md。
+
+### 收尾导出 v0.9
+- BOM_v0.9_20261118-043502.csv；四页 PNG（power/main/audio/hmi_page_v09.png）；PDF（mini_autotune_v0.9_20261118-0436.pdf）；.epro 设计文件夹 ZIP（mini_autotune_v0.9_20261118-0436.epro.zip，327KB）；放大图 zoom_C28x2_v09 / zoom_U3_decouple_v09 / zoom_C26_v09（含位号）。
+
+### Not tried / 未验证
+- ERC 明细：headless 取不到（同上 G1.4）→ **待鼠王在可见窗口跑 DRC**，不声称 error 0。
+- 一致性手册级深度核对：**未完成**（无联网），见 consistency_summary_G15.md；建议联网后独立实例补做。
+
+## G1.6 落实（2026-11-18，分支 g1.4，基线 f7ba23e）
+
+### 步骤0 备份
+- mini_autotune.eprj3.bak_20261118-050139；sch 快照 sch_bak_g16_20261118-050139.tar.gz。单线程，未开并行子任务。
+
+### 步骤1 属性对齐（原位替换为立创库对应 C 号器件，位号/网络不变）
+- 电阻符号同为 R0603，replace 通过（R13 试替换成功，符号框无差）；R3 因原 C2889398 符号与外框不同，replace 被拒 → remove+add+短导线+网络标签（+3V3/+3V3_A），并补网络标签恢复连接。
+- 结果（前/后对照见 hw/exports/check/g16_attr_align.md）：
+  - R13 → C23003（33.2k，0603WAF3322T5E）；Description 由 2.2k 更正为 33.2k，Datasheet 由 0603WAF2201T5E 更正为 0603WAF3322T5E。
+  - R14/R15 → C25804（10k，0603WAF1002T5E）；Description 2.2k→10k，Datasheet 更正。
+  - R10/R11/R12 → C4190（2.2k，0603WAF2201T5E）；Datasheet 由 270Ω/62Ω 料更正为 0603WAF2201T5E。
+  - R3 → C22859（10Ω，0603WAF100JT5E）；原 C2889398 查不到。网络 +3V3 / +3V3_A 不变（网表核对 1=+3V3、2=+3V3_A）。
+  - SW1/SW2 → C56165515：系统库取不到对应器件（lib_Device.search 返回空），**记录并保留原样，不换料**；DeviceName TS-1088-AR03016 与制造商料号 XD-TS-1088R-02026 仍不一致（待系统库/人工修）。
+- 每组跑 tools/check.sh：check_g16_g1/g2/g3.md 均为 器件 +0/-0、引脚改动 0、网络 +0/-0（PNG：g1 0变、g2 1变、g3 1变，符合人机交互/音频页面可见变化）。
+- 属性复核（g16_attr_align.md）：电阻 R13–R15/R10–R12/R3 全部对齐；真实仍不一致仅 SW1/SW2（见上），其余为 LCSC 命名后缀/Datasheet 站内页，属正常。
+
+### 步骤2 D1（C252436）
+- 立创国内站可查：item.szlcsc.com/20914190.html 为 UMW USBLC6-4SC6；jlcpcb partdetail C252436 = Yenji Elec USBLC6-4SC6（有规格）。判定 **在售**，D1 保留，不替换；REVIEW_NOTES 已记「下单前复核品牌/库存」。未采用候选 C85364。
+
+### 步骤3 BOM v1.0
+- L1 备注：淘宝自采，2.2µH，2520 尺寸，Isat≥3A（封装名借用 VLS252012CX-150M 仅取 2.5×2.0mm）。
+- C14663/C45783/C5272786 备注「国际站库存0，下单前查国内站」。
+- 淘宝件（J1/J2/K1–9/SW/U1/U3/L1）不计价；立创合计（已知价）≈¥32.93（BOM_v1.0_20261118-050448.csv）。
+
+### 步骤4 REVIEW_NOTES 新增「待工程师确认」
+- +3V3 总标称电容约 76µF（C28/C29/C4/C15/C3/C16）> TPS563201 推荐 20–68µF（SLVSD90 Table 7-2）；偏压降容后可能落回；是否去掉 C4 或 C15，或打样实测负载阶跃。
+- LED 共阳 5V：复位期间 GPIO 高阻，固件应尽早把 RGB 三脚设为输出高。
+- C4 钽：PCB 阶段确认丝印「+」在 pad1。
+- U3 底进音：PCB 声孔 ≥0.5mm（DS-000069 p.17）。
+
+### 收尾导出 v1.0
+- BOM_v1.0_20261118-050448.csv；四页 PNG（power/main/audio/hmi_page_v10.png）；PDF（mini_autotune_v1.0_20261118-0505.pdf）；.epro 设计文件夹 ZIP（mini_autotune_v1.0_20261118-0505.epro.zip）；替换件放大图 zoom_g16_R13_R14_R15 / zoom_g16_R10_R11_R12 / zoom_g16_R3 / zoom_g16_SW1 / zoom_g16_SW2（均含位号与值）。
+
+### Not tried / 未验证
+- ERC 明细：headless 取不到 → **待鼠王在可见窗口跑 DRC**，不声称 error 0。ATTRMATCHCODE 警告是否随属性对齐消失：headless 无法读 DRC 明细，**未能确认**。
+- SW1/SW2 真实属性不一致（系统库无器件）：未修，记录待人工/系统库。
+- 电容等仍按「已知价」；C15850/C22859/C252436/C45783/TP 单价待确认。
+
+## G1.7 收口准备（2026-11-18，分支 g1.4，基线 ff80cdd）
+本轮只做文档与 BOM 标注，不改原理图连接。
+- 步骤1 BOM v1.0.1（另存，不覆盖 v1.0）：SW1/SW2 备注改为「淘宝采购，型号以实物为准；DeviceName TS-1088-AR03016 与料号 XD-TS-1088R-02026 不一致，待工程师按实物确认」；R3(C22859) 单价查得填 0.0072（立创公开页 C22859 USD0.001×7.2 估算，下单为准）；立创合计（已知价）≈¥32.94。文件 BOM_v1.0.1_20261118-050802.csv。
+- 步骤2 新建 hw/exports/G1_HANDOFF.md（给人类工程师）：①版本/分支/commit/交付物；②工程师 7 条意见落实对照表（含 G1.4/G1.5 演进：麦克风换 ICS-43434、电容规则按新规调整）；③待工程师确认 7 条；④淘宝采购件清单；⑤已知未验证(ERC)；⑥合并前状态与合并命令草案。引用 REVIEW_NOTES/RUN_LOG/docs/REVIEWS 不抄全文。
+- 步骤3 合并前检查（只检查未合并）：git diff --stat main...g1.4 = 61 files changed, +18116/-0；rev-list main...g1.4 = 0/6（g1.4 领先 6 commit）；工作区干净；g1.4 == origin/g1.4。合并命令草案（未执行）：git checkout main && git merge --no-ff g1.4 && git push origin main。
+- Not tried：全工程 ERC 明细（待鼠王可见窗口跑 DRC，不声称 error0）；C15850/C45783/C252436/TP 等单价待确认。

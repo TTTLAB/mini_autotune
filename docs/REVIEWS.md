@@ -261,3 +261,60 @@ AI 提交评审包
 - 遗留/待决：项3 麦克风（top-port I2S 无货，需鼠王拍板）；单文件 .epro 导出 API 缺失（交付文件夹 ZIP 归档）。
 - 结论：意见 1–7 中 6 项已落实并通过网表核对；项3 因市场无合规料，转鼠王决策。**未开始 PCB，不越阶段门。**
 
+## G1.4 落实（RV-G1-002，2026-11-18，分支 g1.4）
+
+| # | 工程师/规则要求 | 落实结果 | 证据 |
+|---|---|---|---|
+| 1 | CLAUDE.md 追加验证/画图/器件/版本规则 | 已追加，单独 commit a8bb168 | git diff |
+| 2 | tools/check.sh 只读自检 | 已建并实跑 | check_20261118-040858.md |
+| 3 | C1/C5/C7/C10/C15 → 10µF MLCC 0805 ≥16V | C15850(10µF X5R 25V) | netlist_diff_v08 / parts csv |
+| 4 | C27/C28 按 TPS563201 手册改 MLCC | C45783(22µF X5R 25V)；输入>10µF、输出落 20–68µF；示例2×22µF待确认 | netlist_diff_v08 / datasheet p.14–15 |
+| 5 | C4 保持 22µF 钽并复核极性 | 保持；pin1=+3V3 极性正确 | zoom_power_C1_C4.png |
+| 6 | 修 R14/C28 标签重叠 | 旋转 GND 标签 180°，无重叠 | zoom_power_U1_C27_C28.png |
+| 7 | 麦克风换 ICS-43434(C5656610) 三一致 + I2S 不变 | 已完成，引脚按 DS-000069 p.10 | netlist_v08 / zoom_audio_U3_mic.png |
+| 8 | 底进音 PCB 声孔 | 记录 0.5mm(p.17)，留 PCB | REVIEW_NOTES |
+| 9 | 料号/符号/封装一致性多agent核对 | parts csv + A/B/C/R 报告 | consistency_*.md |
+| 10 | 全工程 ERC error0 + warn解释 | 未验证（headless DRC 不可信，见 RUN_LOG） | Not tried |
+| 11 | 导出 v0.8（BOM/四页PNG/PDF/epro/放大图） | 已导出 | hw/exports/*_v08* / BOM_v0.8 / *.pdf / *.epro.zip / zoom_* |
+
+- 预审：Claude B（待指派，独立实例）；终审：工程师朋友（待）。
+- 遗留：ERC 明细待人工复核；C27/C28 是否 2×22µF 待确认；C5656610 供货（停产标记）待鼠王确认。
+- 结论：待预审/终审，未开始 PCB。
+
+
+> 更正：G1.4 §9 的多agent A/B/C/R 报告因 subagent max_turns 上限未产出；实际以 hw/exports/check/consistency_summary_20261118.md（parts csv 机械核对 + 改动件手册核对，OK9/UNSURE55/FAIL0）为准，全件深度手册核对列为未完成。
+
+## G1.5 落实（RV-G1-003，2026-11-18，分支 g1.4）
+
+| # | 要求 | 落实 | 证据 |
+|---|---|---|---|
+| 1 | C28 旁新增第二颗 22µF（C45783，+3V3/GND，2×22µF） | C29 已加 | check_g15_fix1.md / zoom_C28x2_v09.png |
+| 2 | U3 VDD 加 100nF 就近（DS-000069） | C30 C14663 已加 | check_g15_fix2.md / zoom_U3_decouple_v09.png |
+| 3 | C26 处 EN_BUCK/VBST_NODE 重叠只挪位置 | 两标签旋转90° | check_g15_fix3.md / zoom_C26_v09.png |
+| 4 | BOM U3 标淘宝，重算立创合计 | BOM_v0.9，立创合计≈¥32.93(已知价) | BOM_v0.9_20261118-043502.csv |
+| 5 | 55 UNSURE 三组 max80 + R 复核 | 见汇总 | consistency_summary_G15.md |
+| 6 | ERC | headless 取不到明细，待鼠王可见窗口 DRC | Not tried |
+| 7 | 导出 v0.9（BOM/四页PNG/PDF/epro/放大图） | 已导出 | hw/exports/*_v09* |
+
+- 预审 Claude B（待指派）；终审 工程师朋友（待）。遗留：ERC 明细、C15850/C45783 等单价待确认、C5656610 供货（停产标记）。未开始 PCB。
+
+
+## G1.6 落实（RV-G1-004，2026-11-18，分支 g1.4，基线 f7ba23e）
+
+| # | 要求 | 落实 | 证据 |
+|---|---|---|---|
+| 1 | R13→C23003(33.2k) 属性对齐 | 已 replace，Desc/DS 更正 | g16_attr_align.md / check_g16_g1.md |
+| 2 | R14/R15→C25804(10k) | 已 replace | 同上 |
+| 3 | R10→C4190(2.2k) | 已 replace | check_g16_g2.md |
+| 4 | R11/R12→C4190(2.2k) | 已 replace | 同上 |
+| 5 | SW1/SW2→C56165515（取不到则留） | 系统库取不到，保留并记录不一致 | REVIEW_NOTES |
+| 6 | R3→C22859(10Ω)，网络不变 | remove+add+网络标签 | check_g16_g3.md |
+| 7 | 每基跑 check.sh，引脚网络零变化 | 三组均 器件+0/-0、引脚0、网络0 | check_g16_g1/2/3.md |
+| 8 | 属性复核列仍不一致 | 仅 SW1/SW2 | g16_attr_align.md |
+| 9 | D1 国内站在售核查 | 在售(UMW/YenjiElec)，保留 | REVIEW_NOTES |
+| 10 | BOM v1.0（L1/低库存/淘宝/重算） | 已出，立创合计≈¥32.93 | BOM_v1.0_20261118-050448.csv |
+| 11 | 待工程师确认 4 条 | 已写 | REVIEW_NOTES G1.6 |
+| 12 | ERC/ATTRMATCHCODE | headless 取不到，待可见窗口 DRC，不声称 error0 | Not tried |
+| 13 | 导出 v1.0（BOM/四页PNG/PDF/epro/放大图） | 已导出 | hw/exports/*_v10* / BOM_v1.0 / .pdf / .epro.zip / zoom_g16_* |
+
+- 预审 Claude B（待）；终审 工程师朋友（待）。遗留：SW1/SW2 属性、ERC 明细、单价待确认、C5656610 供货。未开始 PCB。

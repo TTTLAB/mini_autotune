@@ -148,3 +148,54 @@
 - **.epro 限制**：当前安装的嘉立创 EDA（V4.1.100）jlceda MCP **未暴露单文件 .epro 工程导出 API**（getExportDocumentFile 仅支持 PDF/PNG/SVG；无项目打包函数，调用 EPRO 一律超时）。故本轮交付的 mini_autotune_v0.7_*.epro 为**当前 .eprj3 设计文件夹的 ZIP 归档**（解压后为文件夹工程）；如需规范单文件 .epro，请在 GUI「文件→导出」生成。PDF/四页PNG/网表/BOM 均由 API 正常导出。
 
 
+## G1.4 落实（2026-11-18）
+
+### 电容返工（G1.3 按旧规则改多的回收）
+- C1/C5/C7/C10/C15：改回 10µF MLCC C15850（C0805 X5R 25V，≥16V）。
+- C27（U1 输入）/C28（U1 输出）：改 22µF MLCC C45783（C0805 X5R 25V）。依据 TPS563201 SLVSD90：输入 ceramic over 10 µF + 0.1µF（§7.2.2.4, p.15）；输出 C8+C9 推荐 20–68µF，示例 2×22µF（Table 7-2, p.14–15）。本设计 C27=22µF、C28=22µF。待确认：是否按示例加到 2×22µF。
+- C4 保持 22µF 钽 16V（+3V3，>10µF 用钽，耐压16V≥10V）；网表 pin1=+3V3 电源侧，极性正确。
+- R14 与 C28 网络标签文字重叠：旋转 R14 侧 GND 标签 180° 消除重叠（不改连接）。
+
+### 麦克风换 ICS-43434（方案 A，C5656610）
+- U3：INMP441(C574021) → ICS-43434(C5656610)，符号/封装/料号三者一致（MIC-SMD_6P-L3.5-W2.7-P0.90-BL）。
+- 引脚按 DS-000069 Rev1.0 p.10 Table 8：1 WS / 2 LR / 3 GND / 4 SCK / 5 VDD / 6 SD。接线：WS→I2S_MIC_WS、LR→GND(左声道)、GND→GND、SCK→I2S_MIC_BCLK、VDD→+3V3_A、SD→I2S_MIC_SD。I2S 网络名与 ESP32 GPIO 不变（网表：I2S_MIC_WS=U2.5+U3.1、I2S_MIC_BCLK=U2.4+U3.4、I2S_MIC_SD=U2.6+R4.1+U3.6）。
+- VDD 去耦：C8/C9 100nF + C7 10µF（手册 p.10 要求 0.1µF，满足）。SD 100k 下拉：R4（手册 p.15，满足）。
+- PCB 阶段注意：ICS-43434 为底部进音，PCB 麦克风下方需开声孔，最小直径 0.5mm（手册 p.17），留 PCB 阶段。
+- 风险：立创库 C5656610 标注"停产"；方案 A 由鼠王已定，采购需复核供货。
+
+### 遗留
+- ERC 明细在 headless 下不可取得（见 RUN_LOG G1.4「Not tried」），待人工激活页面复核。
+- C27/C28 是否加到 2×22µF 待确认。
+
+
+### 步骤5 更正
+- A/B/C 并行子任务因 max_turns 上限未产出报告，R 未启动；改为 parts.csv 机械核对 + 改动件手册核对，见 hw/exports/check/consistency_summary_20261118.md（OK9/UNSURE55/FAIL0）。全 64 件逐件深度手册核对未完成（Not done）。
+
+## G1.5 落实（2026-11-18）
+
+- C29：C28 旁新增第二颗 22µF MLCC（C45783，C0805 X5R 25V），+3V3/GND，合 TPS563201 p.14–15 示例 2×22µF。
+- C30：U3 VDD 加 100nF MLCC（C14663 0603 X7R）到 GND 就近；依据 DS-000069 p.10（VDD 0.1µF）+ p.15（0.1µF X7R 靠近）。
+- C26 处 EN_BUCK / VBST_NODE 标签重叠：两标签旋转 90°，仅显示、不改连接（zoom_C26_v09.png）。
+- BOM：U3 标淘宝、不计立创价；立创合计（已知价）≈¥32.93（C15850×5/C45783×3/D1/R3/TP/L1 单价待确认未计入）。
+- 一致性：仅复核 55 个 UNSURE 件；**子任务无 web 权限**，手册级全 UNSURE；本地机械核对 FAIL=0，见 consistency_summary_G15.md / consistency_local_all.md。
+- 遗留：ERC 明细待鼠王可见窗口 DRC；手册级深度核对待联网补做。
+
+## G1.6 落实（2026-11-18）
+
+### 属性对齐（步骤1）
+- R13→C23003(33.2k)、R14/R15→C25804(10k)、R10/R11/R12→C4190(2.2k)、R3→C22859(10Ω，原 C2889398 查不到)；DeviceName/Description/Datasheet 已随 C 号对齐，位号与网络不变（对照表 hw/exports/check/g16_attr_align.md）。
+- R3 用 remove+add+网络标签（replace 被符号框容差拒）；其余电阻 replace 直接通过。
+- SW1/SW2 → C56165515：系统库取不到器件，保留原样，DeviceName TS-1088-AR03016 与制造商料号 XD-TS-1088R-02026 仍不一致，待人工/系统库。
+
+### D1（步骤2）
+- C252436 在立创/JLC 可查（UMW/YenjiElec USBLC6-4SC6），判定在售，保留不换；下单前复核品牌库存。
+
+### 待工程师确认（步骤4）
+1. +3V3 总标称电容约 76µF（C28/C29/C4/C15/C3/C16）> TPS563201 推荐 20–68µF（SLVSD90 Table 7-2）；MLCC 偏压降容后可能落回范围；是否去掉 C4 或 C15，或打样实测负载阶跃。
+2. LED 共阳 5V：复位期间 GPIO 高阻，固件应尽早把 RGB 三脚设为输出高。
+3. C4 钽：PCB 阶段确认丝印「+」在 pad1。
+4. U3 底进音：PCB 声孔 ≥0.5mm（DS-000069 p.17）。
+
+### 其他
+- BOM v1.0：L1 淘宝(2.2µH/2520/Isat≥3A)；C14663/C45783/C5272786 国际站库存0 提示；淘宝件不计价；立创合计≈¥32.93(已知价)。
+- ERC 明细与 ATTRMATCHCODE：headless 取不到，待可见窗口 DRC，未确认。
