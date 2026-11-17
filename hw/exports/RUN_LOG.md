@@ -77,3 +77,16 @@
 - 接法：pin1/3/5→GND；pin4(R+)→R_R(270Ω)→RGB_R(GPIO38)；pin6(G+)→R_G(62Ω)→RGB_G(GPIO39)；pin2(B+)→R_B(62Ω)→RGB_B(GPIO40)。（注：GPIO 网名沿用主控页 RGB_R/G/B，对应你所说 LED_R/G/B=GPIO38/39/40。）
 - HMI 残余 ERC：NETOBJECTONGRID×4（LED 符号引脚坐标非栅格 ±19/21 所致，标签已对齐栅格；属库符号栅格问题，非电气）。
 - 导出 hmi_page.png。
+
+## 2026-11-18 F 插队修复（LED1 蓝灯反接）— 完成
+- 症状：人工读图发现 LED1 中间那路（蓝）二极管阴极接 B_K、阳极接 GND，蓝灯反接。
+- 网表证据（修复前，GL5050RGB01-A / C51933351）：LED1.1=GND, .2=B_K, .3=GND, .4=R_K, .5=GND, .6=G_K；R10(270Ω).1=RGB_R/.2=R_K，R11(62Ω).1=RGB_G/.2=G_K，R12(62Ω).1=RGB_B/.2=B_K。
+- 库符号引脚图形位置（符号本地坐标，10mil/0.01in，y 上为正）：pin1 左(-19,30)、pin2 左(-20,6)、pin3 左(-19,-16)、pin6 右(20,30)、pin5 右(20,6)、pin4 右(21,-16)。三只二极管按行绘制：上行 pin1–pin6、中行 pin2–pin5、下行 pin3–pin4。
+- 根因：库符号（project 库 2fab92e94ff31362）**中行二极管方向画反**——阴极在 pin2(B+) 侧、阳极在 pin5(G−/GND) 侧；而按规格书 p.2，pin1/3/5=阴极(−)、pin2/4/6=阳极(+)。上/下行方向本正确，仅中行反。
+- 修复：翻转符号中行二极管图形（POLY e14/e15 关于 x=0 镜像：阴极由左(pin2)改到右(pin5=GND)，阳极由右(pin5)改到左(pin2=B+)），即蓝灯正向。仅改符号图形，引脚号与网络不变，电气/网表不受影响。
+- 按规格书 p.2 以引脚号为准复核：pin1/3/5→GND；pin4→R10→RGB_R；pin6→R11→RGB_G；pin2→R12→RGB_B —— 原接线即符合，无需改引脚。
+- 网络名 R_K/G_K/B_K → LED_RA/LED_GA/LED_BA（阳极侧网）。
+- 修复后网表证据：LED1.1=GND, .2=LED_BA, .3=GND, .4=LED_RA, .5=GND, .6=LED_GA；R10.1=RGB_R/.2=LED_RA；R11.1=RGB_G/.2=LED_GA；R12.1=RGB_B/.2=LED_BA。
+- 全局 ERC：error 0 / warn 4（均 NETOBJECTONGRID，LED 引脚非 10 栅格；与修复前基线一致，未新增错误）。
+- 导出 hmi_page.png(3200×2731)、hmi_led_zoom.png(1600×987，框住 LED1+R10/R11/R12)。
+
