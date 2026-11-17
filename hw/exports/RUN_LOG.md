@@ -71,3 +71,9 @@
 - LED1(GL5050RGB01-A/C51933351) 已放置、引脚暂不接线（引脚映射待规格书封装图确认，见 REVIEW_NOTES）。
 - R_R/R_G/R_B 已放置：一端网络标签 RGB_R/RGB_G/RGB_B（=GPIO38/39/40，与主控页 U2 网络同名连接），另一端悬空待 LED 接线。
 - HMI 残余 ERC：CHECKFLOATPIN×1（LED1 各脚 + 电阻悬空端，属“LED 待接线”，按规则不算失败）。全局 ERC 仅此 1 条。
+
+## 2026-11-18 步骤B2 正式接线（LED，映射已人工确认）
+- 规格书 p.2 极性图确认：pin1=B-、pin2=B+；pin3=R-、pin4=R+；pin5=G-、pin6=G+（颜色非顺序对应！）。
+- 接法：pin1/3/5→GND；pin4(R+)→R_R(270Ω)→RGB_R(GPIO38)；pin6(G+)→R_G(62Ω)→RGB_G(GPIO39)；pin2(B+)→R_B(62Ω)→RGB_B(GPIO40)。（注：GPIO 网名沿用主控页 RGB_R/G/B，对应你所说 LED_R/G/B=GPIO38/39/40。）
+- HMI 残余 ERC：NETOBJECTONGRID×4（LED 符号引脚坐标非栅格 ±19/21 所致，标签已对齐栅格；属库符号栅格问题，非电气）。
+- 导出 hmi_page.png。
