@@ -1,0 +1,7 @@
+mini_autotune 电源页 ERC 报告  2026-11-17T13:27:26.618Z
+按涉及图页统计：
+- 主控: {"OBJECTOUTSIDESHEET":4,"CHECKFLOATPIN":2}
+- 音频: {"OBJECTOUTSIDESHEET":5}
+- 人机交互: {"OBJECTOUTSIDESHEET":11,"CHECKFLOATPIN":2}
+- 主控+音频+人机交互: {"CHECKFLOATPIN":1}
+结论：电源页(5d67812748f7e03d)自身条目=0；其余均在未完成的主控/音频/人机交互页。
