@@ -297,3 +297,28 @@
 - 执行：git checkout main → git pull --ff-only（Already up to date）→ git merge --no-ff g1.4 -m "Merge G1 schematic v1.0 (g1.4) for engineer review" → **合并提交 8af1bd6**（ort 策略，无冲突）→ git push origin main（8d90dc5..8af1bd6）。
 - 保留 g1.4 分支（df45695，origin/g1.4 同）。main 现为 G1 原理图 v1.0。
 - ERC 仍由工程师在可见窗口确认（见 G1_HANDOFF.md §5 / G1_CHECKLIST.md §D）；本仓未声称 error 0。
+
+## P1 ｜ PCB 板框 + 布局规划（2026-11-18，分支 p1-layout，基线 070edc0）
+本轮只做 P1：板框 + 布局规划，不走线、不出 Gerber、不下单、不碰 EDA 窗口、不用桌面自动化。
+
+### 步骤0 备份与分支
+- 备份工程索引 mini_autotune.eprj3.bak_20261118-051428（3267B，工程外）；sch 快照 sch_bak_p1_20261118-051428.tar.gz（工程外，可恢复）。
+- git checkout -b p1-layout（基线 main=070edc0）。
+
+### 步骤1 布局约束文档 hw/PCB_PLAN.md（Claude CLI 撰写）
+- 由本机 Claude CLI（claude -p --permission-mode acceptEdits --max-turns 20 --output-format json，模型 auto/deepseek-v4.1-flash）撰写，产出 hw/PCB_PLAN.md（289 行）。
+- 内容：层叠工艺（2层/1.6mm/1oz/6-6mil/孔0.3-0.6mm）；板框估算（器件焊盘 968.66mm² 估算 → 需求约 2944mm² → 候选 80×50mm，待鼠王确认）；四区（电源/主控/音频/交互）；8 条关键规则；待确认清单；参考文档。
+- 页码：Claude headless 无 bash/PDF 解析权限；本地 tps563201.pdf 仅 2 页封装附录（非完整 SLVSD90），ics43434.pdf 纯 py 提取失败，ESP32 模组手册缺失 → 8 条规则页码统一标「页码待确认」，符合 CLAUDE.md「查不到写 UNSURE/待确认，禁编造」。列入 Not tried。
+- 附：hw/exports/pcb/layout_plan_v0.1_20261118-053140.png（Pillow 绘制的布局规划示意图，非 EDA 渲染，已标注「非定稿」）。
+
+### 步骤2 原理图同步到 PCB + 粗摆放 —— 受阻（headless 限制）
+- 事实：jlceda（JLCEDA Pro V4.1.100 bridge）headless 会话中，pcb_Document.importChanges({force:true}) 反复返回 ok=true，但 pcb_PrimitiveComponent.getAll() 计数恒为 0；磁盘 pcb/PCB1.epcb2 无任何器件 PRIMITIVE（仅默认图层/规则配置），同步未落地。已试：打开/激活 PCB 文档、先打开 4 页原理图再导入、显式传原理图 uuid、waitForProjectReady、新建板/PCB 绑定后导入 —— 均 0 器件。
+- 判定：本环境 headless 无法执行「从原理图导入变更」同步引擎（疑似需可见 GUI 引擎/交互线程）。按任务「不碰 EDA 窗口、不用桌面自动化」，未改走可见窗口。
+- 处置：不伪造 PCB、不手工堆器件冒充「已同步」。实验产生的临时 PCB2/板子 Main 已通过恢复工程索引（cp 备份）撤销，工程结构回到 Board1（原理图 Main + PCB1 空）；磁盘遗留 pcb/PCB2.epcb2（305B 空文件，索引已不引用），PCB1.epcb2 被初始化为默认配置（仍空），均无器件、无电气影响。
+- 目标顶层/底层 PCB PNG + 3D：随同步受阻未产出，列入 Not tried。
+
+### Not tried / 未验证（P1）
+1. 手册页码：本地无完整 SLVSD90（仅封装附录）与 ESP32-S3 模组手册，ics43434.pdf 解析失败 → 全部页码待确认，未核对。
+2. 原理图→PCB 同步（importChanges）headless 不可用，详见步骤2；需鼠王在可见窗口用「从原理图导入变更」或在 GUI 跑一次。
+3. PCB 顶层/底层 PNG、3D 预览（RayTracer）、DRC 明细：均未产出。
+4. 板框尺寸、接口朝向、SW1/SW2 实物型号：待鼠王/工程师确认，未定稿。
