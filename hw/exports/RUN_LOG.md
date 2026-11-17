@@ -285,3 +285,10 @@
 - ERC 明细：headless 取不到 → **待鼠王在可见窗口跑 DRC**，不声称 error 0。ATTRMATCHCODE 警告是否随属性对齐消失：headless 无法读 DRC 明细，**未能确认**。
 - SW1/SW2 真实属性不一致（系统库无器件）：未修，记录待人工/系统库。
 - 电容等仍按「已知价」；C15850/C22859/C252436/C45783/TP 单价待确认。
+
+## G1.7 收口准备（2026-11-18，分支 g1.4，基线 ff80cdd）
+本轮只做文档与 BOM 标注，不改原理图连接。
+- 步骤1 BOM v1.0.1（另存，不覆盖 v1.0）：SW1/SW2 备注改为「淘宝采购，型号以实物为准；DeviceName TS-1088-AR03016 与料号 XD-TS-1088R-02026 不一致，待工程师按实物确认」；R3(C22859) 单价查得填 0.0072（立创公开页 C22859 USD0.001×7.2 估算，下单为准）；立创合计（已知价）≈¥32.94。文件 BOM_v1.0.1_20261118-050802.csv。
+- 步骤2 新建 hw/exports/G1_HANDOFF.md（给人类工程师）：①版本/分支/commit/交付物；②工程师 7 条意见落实对照表（含 G1.4/G1.5 演进：麦克风换 ICS-43434、电容规则按新规调整）；③待工程师确认 7 条；④淘宝采购件清单；⑤已知未验证(ERC)；⑥合并前状态与合并命令草案。引用 REVIEW_NOTES/RUN_LOG/docs/REVIEWS 不抄全文。
+- 步骤3 合并前检查（只检查未合并）：git diff --stat main...g1.4 = 61 files changed, +18116/-0；rev-list main...g1.4 = 0/6（g1.4 领先 6 commit）；工作区干净；g1.4 == origin/g1.4。合并命令草案（未执行）：git checkout main && git merge --no-ff g1.4 && git push origin main。
+- Not tried：全工程 ERC 明细（待鼠王可见窗口跑 DRC，不声称 error0）；C15850/C45783/C252436/TP 等单价待确认。
