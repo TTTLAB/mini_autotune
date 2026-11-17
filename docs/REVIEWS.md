@@ -124,6 +124,7 @@ AI 提交评审包
 | 评审 ID | 阶段/门 | 对象与版本 | 预审 | 终审 | 结论 | 日期 |
 |---|---|---|---|---|---|---|
 | RV-G0-001 | 需求冻结 / G0 | docs/REQUIREMENTS.md v1.0 | —（G0 由鼠王直接批准） | 鼠王 | 通过 | 2026-11-17 |
+| RV-G1-001 | 原理图 / G1 | mini_autotune v0.4（hw/exports/mini_autotune_v0.4_20261118-0220.epro） | 待 Claude B 预审 | 待工程师终审 | 待评审 | 2026-11-18 |
 
 ## 6. 评审记录模板
 
@@ -209,3 +210,33 @@ AI 提交评审包
 | v0.1 | 2026-11-17 | 初稿：规则、流程、检查清单、模板、示例 | AI |
 | v0.2 | 2026-11-17 | G0 返工：评审包清单改为功放/LDO；S-01 电源树改为 USB-C→ESD→LDO、5 V 直供功放；S-05 只查功放；S-07 改为 3.3 V PWM RGB；S-09 改为上电/掉电行为；S-10/S-11/S-13 删除电池相关内容；B-07 改为 LDO/ESD/连接器；P-03/P-07/P-12 删除电池内容，P-12 改为扬声器腔体 | AI |
 | v0.3 | 2026-11-17 | 记录 G0 需求冻结（RV-G0-001）：REQUIREMENTS v1.0 通过，RISK-01 已裁决，当前调显示确认为 MUST | AI |
+
+## RV-G1-001 原理图评审（G1，待评审）
+
+### 基本信息
+- 阶段/门：原理图 / G1→G2（评审前置；未过门，禁止进入布局/PCB）
+- 评审对象：mini_autotune 原理图 v0.4
+  - 工程：/Users/wangmingshu/Documents/LCEDA-Pro/projects/mini_autotune/mini_autotune.eprj3
+  - 导出物：hw/exports/mini_autotune_v0.4_20261118-0220.epro；四页 PNG（power_page.png / main_page.png / audio_page.png / hmi_page.png）+ audio_amp_zoom.png + hmi_led_zoom.png；整册 PDF（sch_all_v0.4_20261118-0220.pdf）；BOM（BOM_v0.4_20261118-0220.csv）
+  - git commit：本轮 E 提交（见 git log）
+- 日期：2026-11-18
+- 预审：Claude B（待指派，独立实例，未参与撰写）
+- 终审：工程师朋友（待）
+- 参与：鼠王、AI
+- 评审包：hw/exports/REVIEW_NOTES.md（设计目标 / 四页要点 / 已知取舍 / 5 问）、hw/exports/erc_all_report.txt
+
+### 评审范围
+- 四页原理图（电源/主控/音频/人机交互）与 BOM 初稿。不含 PCB。
+- 重点：LED1 极性修复（阶段F）、SD_MODE 分压、绿/蓝 LED 3.3V 余量、LDO(AMS1117+钽)方案、功放输出滤波数值。
+
+### 状态
+- 检查清单：待预审（见 §4.1 RV-SCH 清单）
+- 发现项：待预审填写
+- 结论：**待评审**（不得过门）
+
+### 已知问题（待评审回应）
+见 hw/exports/REVIEW_NOTES.md「5 个重点问题」。
+
+### 签字
+- Claude B 预审：__________ 日期：__________
+- 工程师朋友终审：__________ 日期：__________

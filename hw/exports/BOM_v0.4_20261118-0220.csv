@@ -1,0 +1,34 @@
+No.,Quantity,Comment,Designator,Footprint,Value,Manufacturer Part,Manufacturer,Supplier Part,Supplier,单价(USD),"单价(¥,估算)",库存,来源URL,备注
+1,5,10uF,"C1,C5,C7,C10,C15",C0603,10uF,CL10A106MA8NRNC,SAMSUNG(三星),C96446,LCSC,0.019,0.1368,1098840,https://www.lcsc.com/product-detail/C96446.html,立创国际站(lcsc.com)美元报价；InStock，库存1098840；国内站(szlcsc)¥价待确认
+2,7,100nF,"C2,C3,C6,C8,C9,C11,C16",C0603,100nF,CC0603KRX7R9BB104,YAGEO(国巨),C14663,LCSC,0.003,0.0216,264800,https://www.lcsc.com/product-detail/C14663.html,立创国际站(lcsc.com)美元报价；InStock，库存264800；国内站(szlcsc)¥价待确认
+3,1,22uF,C4,CAP-SMD_L3.2-W1.6,22uF,CA45-A-16V-22uF-K,CEC(振华新云),C782264,LCSC,0.0917,0.6602,24845,https://www.lcsc.com/product-detail/C782264.html,立创国际站(lcsc.com)美元报价；InStock，库存24845；国内站(szlcsc)¥价待确认
+4,2,1nF-C0603,"C12,C13",C0603,,1nF-C0603,,C2940049,LCSC,待确认,待确认,待确认,https://www.lcsc.com/product-detail/C2940049.html,lcsc.com 公开页未取到报价（扩展库/无公开 JSON-LD）；¥单价与库存待确认
+5,1,1uF±10%100VX7R-0603,C14,C0603,,1uF±10%100VX7R-0603,,C9900005977,LCSC,待确认,待确认,待确认,https://www.lcsc.com/product-detail/C9900005977.html,lcsc.com 公开页未取到报价（扩展库/无公开 JSON-LD）；¥单价与库存待确认
+6,1,USBLC6-4SC6,D1,SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BR,,USBLC6-4SC6,,C252436,LCSC,待确认,待确认,待确认,https://www.lcsc.com/product-detail/C252436.html,lcsc.com 公开页未取到报价（扩展库/无公开 JSON-LD）；¥单价与库存待确认
+7,3,PE-0603PFB121ST,"FB1,FB2,FB3",L0603,,PE-0603PFB121ST,PULSE(普思),C2661472,LCSC,0.0245,0.1764,2560,https://www.lcsc.com/product-detail/C2661472.html,立创国际站(lcsc.com)美元报价；InStock，库存2560；国内站(szlcsc)¥价待确认
+8,1,TYPE-C-16PIN,J1,USB-TYPE-C-SMD_C9900062935,,TYPE-C-16PIN,,C9900062935,LCSC,待确认,待确认,待确认,https://www.lcsc.com/product-detail/C9900062935.html,lcsc.com 公开页未取到报价（扩展库/无公开 JSON-LD）；¥单价与库存待确认
+9,1,PH2.0-2P,J2,CONN-TH_2P-P2.00_BOSSIE_BX-PH2.0-2PZZ,,PH2.0-2P,,C9900095162,LCSC,待确认,待确认,待确认,https://www.lcsc.com/product-detail/C9900095162.html,lcsc.com 公开页未取到报价（扩展库/无公开 JSON-LD）；¥单价与库存待确认
+10,9,TS-1809-T20,"K1,K2,K3,K4,K5,K6,K7,K8,K9",SW-SMD_L3.9-W2.9-LS4.8SWQC_SPST,,TS-1809-T20,,C9900021414,LCSC,待确认,待确认,待确认,https://www.lcsc.com/product-detail/C9900021414.html,lcsc.com 公开页未取到报价（扩展库/无公开 JSON-LD）；¥单价与库存待确认
+11,1,GL5050RGB01-A,LED1,LED-SMD_6P-L5.0-W5.0_GL5050RGB01-A,,GL5050RGB01-A,Guiguang light(桂光光电),C51933351,LCSC,0.0135,0.0972,20960,https://www.lcsc.com/product-detail/C51933351.html,立创国际站(lcsc.com)美元报价；InStock，库存20960；国内站(szlcsc)¥价待确认
+12,2,5.1kΩ,"R1,R2",R0603,5.1kΩ,RMC06035.1K1%N,Tyohm(幸亚电阻),C269716,LCSC,0.0022,0.0158,16300,https://www.lcsc.com/product-detail/C269716.html,立创国际站(lcsc.com)美元报价；InStock，库存16300；国内站(szlcsc)¥价待确认
+13,1,10Ω,R3,R0603,10Ω,0603 ±5% 10Ω,VO(翔胜),C2889398,LCSC,待确认,待确认,待确认,https://www.lcsc.com/product-detail/C2889398.html,lcsc.com 公开页未取到报价（扩展库/无公开 JSON-LD）；¥单价与库存待确认
+14,2,100kΩ,"R4,R5",R0603,100kΩ,0603WAF1003T5E,UNI-ROYAL(厚声),C25803,LCSC,0.0015,0.0108,4884400,https://www.lcsc.com/product-detail/C25803.html,立创国际站(lcsc.com)美元报价；InStock，库存4884400；国内站(szlcsc)¥价待确认
+15,3,10kΩ,"R6,R8,R9",R0603,10kΩ,0603WAF1002T5E,UNI-ROYAL(厚声),C25804,LCSC,0.0013,0.0094,2893300,https://www.lcsc.com/product-detail/C25804.html,立创国际站(lcsc.com)美元报价；InStock，库存2893300；国内站(szlcsc)¥价待确认
+16,1,22kΩ,R7,R0603,22kΩ,0603WAF2202T5E,UNI-ROYAL(厚声),C31850,LCSC,0.002,0.0144,987300,https://www.lcsc.com/product-detail/C31850.html,立创国际站(lcsc.com)美元报价；InStock，库存987300；国内站(szlcsc)¥价待确认
+17,1,270Ω,R10,R0603,270Ω,0603WAF2700T5E,UNI-ROYAL(厚声),C22966,LCSC,0.0009,0.0065,100100,https://www.lcsc.com/product-detail/C22966.html,立创国际站(lcsc.com)美元报价；InStock，库存100100；国内站(szlcsc)¥价待确认
+18,2,62Ω,"R11,R12",R0603,62Ω,RC0603FR-0762RL,YAGEO(国巨),C245989,LCSC,0.0025,0.018,11200,https://www.lcsc.com/product-detail/C245989.html,立创国际站(lcsc.com)美元报价；InStock，库存11200；国内站(szlcsc)¥价待确认
+19,2,TS-1088-AR03016,"SW1,SW2",SW-SMD_L3.9-W3.0_TS-1088-AR02026,,TS-1088-AR03016,,C9900285271,LCSC,待确认,待确认,待确认,https://www.lcsc.com/product-detail/C9900285271.html,lcsc.com 公开页未取到报价（扩展库/无公开 JSON-LD）；¥单价与库存待确认
+20,2,TP-黄色测试点,"TP1,TP2",TESTPOINT-TH_BD3.2,,TP-黄色测试点,,C9900007422,LCSC,待确认,待确认,待确认,https://www.lcsc.com/product-detail/C9900007422.html,lcsc.com 公开页未取到报价（扩展库/无公开 JSON-LD）；¥单价与库存待确认
+21,9,BNESD9X5.0ST5G,"TVS1,TVS2,TVS3,TVS4,TVS5,TVS6,TVS7,TVS8,TVS9",DFN1006-2L-RD,,BNESD9X5.0ST5G,BORN(伯恩半导体),C19077972,LCSC,0.0112,0.0806,6980,https://www.lcsc.com/product-detail/C19077972.html,立创国际站(lcsc.com)美元报价；InStock，库存6980；国内站(szlcsc)¥价待确认
+22,1,AMS1117-3.3,U1,SOT-223-3_L6.5-W3.4-P2.30-LS7.0-BR,,AMS1117-3.3,YONGYUTAI(永裕泰),C2891839,LCSC,0.0323,0.2326,970,https://www.lcsc.com/product-detail/C2891839.html,立创国际站(lcsc.com)美元报价；InStock，库存970；国内站(szlcsc)¥价待确认
+23,1,2.4GHz,U2,WIRELM-SMD_ESP32-S3-WROOM-1,2.4GHz,ESP32-S3-WROOM-1-N16R8,ESPRESSIF(乐鑫),C2913202,LCSC,3.5548,25.5946,9674,https://www.lcsc.com/product-detail/C2913202.html,立创国际站(lcsc.com)美元报价；InStock，库存9674；国内站(szlcsc)¥价待确认
+24,1,ICS-43432,U3,SENSOR-SMD_ICS-43432,,ICS-43432,TDK InvenSense(应美盛),C574021,LCSC,5.3786,38.7259,1629,https://www.lcsc.com/product-detail/C574021.html,立创国际站(lcsc.com)美元报价；InStock，库存1629；国内站(szlcsc)¥价待确认
+25,1,MAX98357AETE+T,U4,TQFN-16_L3.0-W3.0-P0.50-BL-EP1.5,,MAX98357AETE+T,ADI(亚德诺)/MAXIM(美信),C910544,LCSC,0.8111,5.8399,25540,https://www.lcsc.com/product-detail/C910544.html,立创国际站(lcsc.com)美元报价；InStock，库存25540；国内站(szlcsc)¥价待确认
+
+# ===== 汇总（不含 PCB 与装配）=====
+# 已明确单价：41 个器件，合计 10.1915 USD ≈ ¥73.38（按 1 USD≈7.2 CNY 估算，汇率待确认）
+# 待确认单价：9 条料号 -> 4:C2940049(1nF-C0603) ; 5:C9900005977(1uF±10%100VX7R-0603) ; 6:C252436(USBLC6-4SC6) ; 8:C9900062935(TYPE-C-16PIN) ; 9:C9900095162(PH2.0-2P) ; 10:C9900021414(TS-1809-T20) ; 13:C2889398(10Ω) ; 19:C9900285271(TS-1088-AR03016) ; 20:C9900007422(TP-黄色测试点)
+# 对照 ¥100：已明确项 ¥73.38，远低于 ¥100；待确认 9 条均为低价无源/连接器/开关/测试点/USBLC6/扩展库料，预计合计 <¥5；结论：预算内（待补齐 9 项¥价后定稿）
+# 缺货/停产：已取得报价的 16 项在 lcsc.com 均 InStock，库存>0；未取到报价的 9 项是否存在/停产待确认（其中 C252436 USBLC6-4SC6 需重点核实）
+# 数据源：lcsc.com（LCSC/立创）公开产品页 JSON-LD；国内立创商城 szlcsc.com 的人民币价/库存接口受 ACL 限制，程序无法读取，标待确认
+# 生成时间：2026-11-18 02:2x（Asia/Shanghai）；BOM 来自 jlceda 四页整册导出（含 61 器件 25 条料号）

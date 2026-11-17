@@ -90,3 +90,21 @@
 - 全局 ERC：error 0 / warn 4（均 NETOBJECTONGRID，LED 引脚非 10 栅格；与修复前基线一致，未新增错误）。
 - 导出 hmi_page.png(3200×2731)、hmi_led_zoom.png(1600×987，框住 LED1+R10/R11/R12)。
 
+## 2026-11-18 D ｜ BOM v0.4 — 完成
+- 从 jlceda 四页整册导出完整 BOM（含 61 个器件、25 条料号），文件名 BOM_v0.4_20261118-0220.csv。
+- 新增列：单价(USD)、单价(¥,估算)、库存、来源URL、备注。
+- 价格/库存来源：lcsc.com（LCSC/立创）公开产品页 JSON-LD（SKU/price/availability/inventoryLevel）。国内 szlcsc.com 人民币价与库存接口受 ACL 限制（403），程序无法读取 → 标「待确认」。
+- 结果：16 条料号取得报价（41 个器件），合计 10.1915 USD ≈ ¥73.38（按 1 USD≈7.2 CNY 估算，汇率待确认）；9 条料号（1nF/1µF 电容、USBLC6-4SC6、USB-C 座、PH2.0-2P、TS-1809 按键、10Ω、TS-1088 开关、测试点等扩展库/无公开报价料号）无公开报价 → 单价/库存标「待确认」。
+- 对照 ¥100：已明确项 ¥73.38，明显低于 ¥100；待确认 9 条均为低价无源/连接器/开关/测试点/USBLC6/扩展库料，预计合计 <¥5；结论预算内（补齐 9 项 ¥价后定稿）。
+- 缺货/停产：已取得报价的 16 项在 lcsc.com 均 InStock、库存>0；C252436(USBLC6-4SC6) 等未取到公开报价，是否停产待确认。
+
+## 2026-11-18 E ｜ 评审包 — 完成（未开始 PCB）
+- 音频页：将 U3/U4 左侧网络标签外移（不再压引脚号/名）；R6→R7 的 SD_MODE 由原“同名网络标签”改为一段短导线直连（R6.2↔R7.1，网表确认同一 SD_MODE），重复标签移至画布外消除网络别名；重导 audio_page.png(3200 宽)；audio_amp_zoom.png 真正框住 U4 + R5 + R6 + R7。
+- 导出 mini_autotune_v0.4_20261118-0220.epro（epro 格式，109806B）。
+- 导出四页 PNG：power_page.png / main_page.png / audio_page.png / hmi_page.png（均 3200 宽）。
+- 导出整册 PDF：sch_all_v0.4_20261118-0220.pdf（4 页）。
+- REVIEW_NOTES.md 补全：设计目标、四页要点、已知取舍（AMS1117+钽、ICS-43432、9 键直连、单路 TVS、绿/蓝 3.3V 余量不足及“阳极接+5V/开漏”备选、输出滤波数值待定）、5 个重点问题。
+- docs/REVIEWS.md 新增 RV-G1-001（待 Claude B 预审 / 待工程师终审）。
+- 全局 ERC 复核（E 完成后）：error 0 / warn 4（4 条均 NETOBJECTONGRID，在 HMI 页 LED1 引脚非 10 栅格；与基线一致，未新增错误）。
+- 全部 commit+push；**未开始 PCB**。
+
