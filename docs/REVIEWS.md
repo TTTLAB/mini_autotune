@@ -283,3 +283,18 @@ AI 提交评审包
 
 
 > 更正：G1.4 §9 的多agent A/B/C/R 报告因 subagent max_turns 上限未产出；实际以 hw/exports/check/consistency_summary_20261118.md（parts csv 机械核对 + 改动件手册核对，OK9/UNSURE55/FAIL0）为准，全件深度手册核对列为未完成。
+
+## G1.5 落实（RV-G1-003，2026-11-18，分支 g1.4）
+
+| # | 要求 | 落实 | 证据 |
+|---|---|---|---|
+| 1 | C28 旁新增第二颗 22µF（C45783，+3V3/GND，2×22µF） | C29 已加 | check_g15_fix1.md / zoom_C28x2_v09.png |
+| 2 | U3 VDD 加 100nF 就近（DS-000069） | C30 C14663 已加 | check_g15_fix2.md / zoom_U3_decouple_v09.png |
+| 3 | C26 处 EN_BUCK/VBST_NODE 重叠只挪位置 | 两标签旋转90° | check_g15_fix3.md / zoom_C26_v09.png |
+| 4 | BOM U3 标淘宝，重算立创合计 | BOM_v0.9，立创合计≈¥32.93(已知价) | BOM_v0.9_20261118-043502.csv |
+| 5 | 55 UNSURE 三组 max80 + R 复核 | 见汇总 | consistency_summary_G15.md |
+| 6 | ERC | headless 取不到明细，待鼠王可见窗口 DRC | Not tried |
+| 7 | 导出 v0.9（BOM/四页PNG/PDF/epro/放大图） | 已导出 | hw/exports/*_v09* |
+
+- 预审 Claude B（待指派）；终审 工程师朋友（待）。遗留：ERC 明细、C15850/C45783 等单价待确认、C5656610 供货（停产标记）。未开始 PCB。
+

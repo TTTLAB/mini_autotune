@@ -219,3 +219,31 @@
 - 3 个并行 Claude CLI 子任务 A/B/C 均因联网检索 datasheet 在 max_turns=30 内未完成并退出，**未产出 consistency_A/B/C.md**；复核 R 未启动。
 - 已改为：parts.csv 机械核对（BOM料号=网表同源一致）+ G1.4 改动件逐件手册核对，汇总见 hw/exports/check/consistency_summary_20261118.md（OK 9 / UNSURE 55 / FAIL 0）。
 - **逐件深度手册核对（全 64 件）本轮未完成 — Not done**，建议下一会话独立实例补做 A/B/C/R。
+
+## G1.5 落实（2026-11-18，分支 g1.4，基线 3debc4d）
+
+### 步骤0 后台清理 + 备份
+- G1.4 子任务：A(killed)、C(killed) 已停、B(completed，max_turns 无产出)；step1/check.sh 已完成 → 无运行中任务需再停。
+- G1.5 复核子任务：A2/B2/C2 启动后，A2/B2 因无 web 权限且耗时被中止，C2 完成；R2 未产出文件。均已停止/结束。
+- 备份：mini_autotune.eprj3.bak_20261118-043200；sch 快照 sch_bak_g15_20261118-043200.tar.gz。
+
+### 步骤1 小修 3 处（每处跑 tools/check.sh）
+1) C29：C28 旁新增第二颗 22µF MLCC（C45783，C0805 X5R 25V），+3V3/GND（TPS563201 SLVSD90 p.14–15 示例 2×22µF）。check_g15_fix1.md：器件 +1/-0、引脚0、网络 +0/-0。
+2) C30：U3 VDD(+3V3_A) 就近加 100nF MLCC（C14663，0603 X7R）到 GND；依据 DS-000069 R1.0 p.10（VDD 0.1µF）+ p.15（0.1µF X7R 靠近）。check_g15_fix2.md：器件 +1/-0、引脚0、网络 +0/-0。
+3) C26 处 EN_BUCK/VBST_NODE 标签重叠：两标签各旋转 90°（仅显示）。check_g15_fix3.md：器件0、引脚0、网络 +0/-0、PNG 电源变；zoom_C26_v09.png 无重叠。
+- 合计 check_g15_final.md：PNG 2变/2未变；器件 +2/-0（C29、C30）；引脚0；网络 +0/-0。
+
+### 步骤2 BOM
+- U3（ICS-43434 C5656610）标淘宝、不计立创价。立创合计（已知价）≈¥32.93（BOM_v0.9_20261118-043502.csv）；C15850×5/C45783×3/D1/R3/TP/L1 单价待确认未计入，淘宝件不计价。远低于 ¥100。
+
+### 步骤3 一致性核对（重跑，如实）
+- 仅核 55 个 UNSURE 件，拆 A(19)/B(18)/C(18)，max_turns=80 + 独立复核 R。
+- **关键限制：Claude CLI 子任务无 web 权限**，在线 datasheet 取不到 → 手册级项一律 UNSURE。C2 完成本地核对、B2 部分/本地核对完成、A2 中止无产出、R2 未写出文件。
+- 补：DSH 用网表+立创库做确定性本地交叉核对（consistency_local_all.md）：66 件，**真实料号不一致 FAIL=0**；封装名表述差异 4（C4/LED1/U2/U4，非冲突，待人工目视）；手册级全 UNSURE。汇总 consistency_summary_G15.md。
+
+### 收尾导出 v0.9
+- BOM_v0.9_20261118-043502.csv；四页 PNG（power/main/audio/hmi_page_v09.png）；PDF（mini_autotune_v0.9_20261118-0436.pdf）；.epro 设计文件夹 ZIP（mini_autotune_v0.9_20261118-0436.epro.zip，327KB）；放大图 zoom_C28x2_v09 / zoom_U3_decouple_v09 / zoom_C26_v09（含位号）。
+
+### Not tried / 未验证
+- ERC 明细：headless 取不到（同上 G1.4）→ **待鼠王在可见窗口跑 DRC**，不声称 error 0。
+- 一致性手册级深度核对：**未完成**（无联网），见 consistency_summary_G15.md；建议联网后独立实例补做。

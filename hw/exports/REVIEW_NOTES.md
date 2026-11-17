@@ -170,3 +170,12 @@
 
 ### 步骤5 更正
 - A/B/C 并行子任务因 max_turns 上限未产出报告，R 未启动；改为 parts.csv 机械核对 + 改动件手册核对，见 hw/exports/check/consistency_summary_20261118.md（OK9/UNSURE55/FAIL0）。全 64 件逐件深度手册核对未完成（Not done）。
+
+## G1.5 落实（2026-11-18）
+
+- C29：C28 旁新增第二颗 22µF MLCC（C45783，C0805 X5R 25V），+3V3/GND，合 TPS563201 p.14–15 示例 2×22µF。
+- C30：U3 VDD 加 100nF MLCC（C14663 0603 X7R）到 GND 就近；依据 DS-000069 p.10（VDD 0.1µF）+ p.15（0.1µF X7R 靠近）。
+- C26 处 EN_BUCK / VBST_NODE 标签重叠：两标签旋转 90°，仅显示、不改连接（zoom_C26_v09.png）。
+- BOM：U3 标淘宝、不计立创价；立创合计（已知价）≈¥32.93（C15850×5/C45783×3/D1/R3/TP/L1 单价待确认未计入）。
+- 一致性：仅复核 55 个 UNSURE 件；**子任务无 web 权限**，手册级全 UNSURE；本地机械核对 FAIL=0，见 consistency_summary_G15.md / consistency_local_all.md。
+- 遗留：ERC 明细待鼠王可见窗口 DRC；手册级深度核对待联网补做。
