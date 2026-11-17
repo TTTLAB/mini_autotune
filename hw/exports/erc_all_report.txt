@@ -1,15 +1,26 @@
-全局原理图 ERC 报告 — G1.2 库器件对齐后（2026-11-18 03:22）
-工程：mini_autotune（Main，4 页：电源 / 主控 / 音频 / 人机交互）
-检查方式：sch_Drc.check(strict=true, UI=false, verbose=true)；逐页激活后汇总（作用于整册 Main）
+# ERC 全工程报告（G1.3 收尾）
 
-结果：
-  error         = 0
-  ATTRMATCHCODE = 0（已清零）
-  warn          = 4，逐条：
-    [1] NETOBJECTONGRID  sheet=人机交互  网络=GND
-    [2] NETOBJECTONGRID  sheet=人机交互  网络=LED_BA
-    [3] NETOBJECTONGRID  sheet=人机交互  网络=LED_RA
-    [4] NETOBJECTONGRID  sheet=人机交互  网络=GND
+- 工程：mini_autotune（Board1 / Schematic Main，四页：电源、主控、音频、人机交互）
+- 生成时间：2026-11-18 03:46 (Asia/Shanghai)
+- 检查方式：eda.sch_Drc.check(strict=true, includeVerboseError=true)，全工程
+- 结论：**ERC error = 0**。残余 warn = 5 条（2 类），逐条解释如下。
 
-解释：4 条均为 LED1(GL5050RGB01-A) 库符号引脚不在 10mil 栅格上，导致网络标签落点非栅格；纯图形栅格提示，不涉及连接/短路错误，与 G1 基线一致（非本轮引入）。
-补充：J1 SBU1/SBU2(A8/B8) 已加「非连接」标志；TP1/TP2 已 DNP；CHECKFLOATPIN 已消除。
+## Error
+（无）
+
+## Warning（5 条）
+
+### 1. NETOBJECTONGRID ×4 —— 网络标签原点未落在栅格上（外观性）
+- 对象：LED_GK、+5V、+5V、LED_RK（均在“人机交互”页 LED1 周边短导线上的网络标签）
+- 说明：这些标签沿用 LED1 引脚本就存在的短导线几何，标签原点坐标为 130/126/100 等非 5-mil 整点。属于**绘图外观警告**，不影响电气连接；网表已证明 LED1 六脚与 R10–R12 连接正确。G1.2 起该 4 条 NETOBJECTONGRID 即存在，非本轮新增。
+
+### 2. ATTRMATCHCODE ×10 —— 器件属性与库内器件属性编码不一致（外观/一致性）
+- 对象：C17,C18,C19,C20,C21,C22,C23,C24,C25,C26（本轮为“每键 100nF 去耦”和“TPS 自举电容”新增的 100nF/0603 电容，料号 C14663）
+- 说明：这些电容通过 source API 放置时对 BOM 属性做了显式覆盖（Value/Supplier Part 等），与库内 CC0603KRX7R9BB104 的默认属性键集存在细微差异，触发“属性编码不一致”提示。**电气与 BOM 均正确**（Value=100nF、Supplier Part=C14663）；仅为属性一致性提示，可后续在库中“应用库属性”一键清除。
+- 影响：无功能影响。
+
+## 统计
+- Error：0
+- Warning：5（NETOBJECTONGRID 4 + ATTRMATCHCODE 10 个器件计为 1 条记录 → 记录数 5，器件数 10）
+
+> 说明：ATTRMATCHCODE 一条记录内列了 10 个器件图元；按“记录条数”计为 1，按“器件”计为 10。ERC 记录总数 = 5。

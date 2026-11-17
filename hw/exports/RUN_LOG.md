@@ -165,3 +165,20 @@
 - 局部放大 PNG：power_page_J1_zoom_v06.png、power_page_U1_zoom_v06.png、hmi_page_K1_zoom_v06.png、audio_page_J2_zoom_v06.png、main_page_C14_zoom_v06.png。
 - **未开始 PCB**。
 
+---
+
+## G1.3 工程师评审意见落实（2026-11-18）
+
+> 本轮按工程师评审意见 1–7 改图。EDA 设计文件不进 git（工作区外）；开工前已做带时间戳整目录备份与 pre-G1.3 快照。以下每项均已改图 + 网表核对；提交为 G1.3 一次性提交（文档+导出物）。
+
+- **项0 备份**：完成。工程整目录复制 `mini_autotune.bak_20261118-0327/`（100MB，含 sch/pcb/panel/.eprj3）+ `mini_autotune.eprj3.bak_20261118-0327`；pre-G1.3 快照 `hw/exports/mini_autotune_v0.6_pre-G1.3_20261118-0327.epro`。
+- **项1 LED**：LED1 pin2/4/6→+5V，pin3→R10→RGB_R、pin5→R11→RGB_G、pin1→R12→RGB_B；R10–R12→2.2kΩ(C4190)。网表证明六脚。commit 见 G1.3。
+- **项2 电源**：U1 AMS1117→TPS563201DDCR(C116592)；新增 L1 2.2µH、R13 33.2k、R14/R15 10k、C26 0.1µF、C27/C28 22µF。反馈 Vout=3.318V；datasheet SLVSD90B p.13/14/15/3。BOM：TPS+电感标淘宝自采。网表证明。commit 见 G1.3。
+- **项3 麦克风**：C574021 经查为 I2S 但 bottom port + EOL；立创无 top-port I2S 有货料。**未换料，保留 C574021 及原 I2S 接线**，待鼠王决策（开孔/转PDM）。commit 见 G1.3。
+- **项4 功放**：删 FB2/FB3/C12/C13；U4 OUTP→J2.1(SPK_P)、OUTN→J2.2(SPK_N)。网表证明。commit 见 G1.3。
+- **项5 按键**：删 TVS1–9；每键加 C17–C25 100nF(C14663)→GND。网表证明 KEY1–9。commit 见 G1.3。
+- **项6 淘宝自采**：BOM_v0.7 中 J1/J2/K1–K9/SW1/SW2 标「淘宝自采」；TP1/TP2 DNP。commit 见 G1.3。
+- **项7 电容**：所有 ≥10µF 改 C782264 钽（22µF/16V CASE-A）：C1/C5/C7/C10/C15 + C4 + C27/C28；pin1(正)→电源、pin2→GND 全部网表核对；局部放大图 7 张。commit 见 G1.3。
+- **收尾**：ERC error 0（warn 5 逐条解释，erc_all_report.txt）；BOM_v0.7 立创合计≈¥76.26<¥100；四页 PNG + 整册 PDF + 局部放大 PNG + 网表证明；.epro 因当前 EDA 无单文件导出 API，交付设计文件夹 ZIP 归档（已注明）。**未开始 PCB**。
+
+

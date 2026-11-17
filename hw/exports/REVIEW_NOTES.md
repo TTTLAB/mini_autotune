@@ -101,3 +101,50 @@
 - 全局 ERC：**error 0 / ATTRMATCHCODE 0 / 残余 warn 4（NETOBJECTONGRID，LED1 引脚非栅格，非电气）**。
 - **未开始 PCB**。
 
+---
+
+## 工程师评审意见及落实（G1.3，2026-11-18）
+
+> 版本 v0.7。依据工程师 2026-11-18 评审意见 1–7 逐条落实。全部修改用「短导线 + 网络标签」画法；关键连接以网表证明（见 hw/exports/netlist_proof_G13.txt 与 netlist_v07_final_jlceda.txt）。ERC：error 0，残余 warn 见 erc_all_report.txt。
+
+### 1. LED（共阳 +5V，阴极经限流电阻接 GPIO，开漏低电平点亮）—— 已落实
+- 改接：LED1 pin2/4/6（B+/R+/G+）→ **+5V**；pin3(R−) → R10 → RGB_R；pin5(G−) → R11 → RGB_G；pin1(B−) → R12 → RGB_B。网表：LED1{1:LED_BK,2:+5V,3:LED_RK,4:+5V,5:LED_GK,6:+5V}；R10{RGB_R,LED_RK}、R11{RGB_G,LED_GK}、R12{RGB_B,LED_BK}。
+- 限流电阻 R10–R12 统一 **2.2kΩ**（C4190，0603 1%）。电流计算 I=(5V−Vf)/R：
+  - 红 Vf_typ≈2.0V：I≈(5−2.0)/2200≈**1.36mA**；绿/蓝 Vf_typ≈3.0V：I≈(5−3.0)/2200≈**0.91mA**。
+  - Vf_max 校核：红 2.2V、绿/蓝 3.4V，则 5−Vf_max 分别为 **2.8V / 1.6V > 0**，余量为正。指示用途亮度足够。
+- **注意**：GPIO 必须配置为**开漏输出**（低电平点亮）。GPIO 输出高电平(3.3V)时，红灯两端约 5−3.3≈**1.7V**，接近 Vf_min，**可能微亮**，属正常现象，固件应避免依赖“高电平=全灭”。
+
+### 2. 电源：AMS1117 → TI TPS 同步降压 —— 已落实
+- U1 由 AMS1117-3.3(SOT-223) 换为 **TPS563201DDCR（C116592，SOT-23-6/DDC）**：Vin 4.5–17V（覆盖 4.5–5.5V），3A，Vout 可调 0.768–7V，580kHz D-CAP2。BOM 中 TPS 芯片与电感标「淘宝自采」。
+- 外围取值依据 TI 数据手册 **SLVSD90B**：Table 7-2「Recommended Component Values」**p.14**（Vout=3.3V 行：R1=33.2k、R2=10k、L1=2.2µH、Cout 20–68µF）；参考电路 Figure 7-1 **p.13**；自举/EN 见 Table 4-1 **p.3**、§7.2.2.x **p.15**。实取：L1=2.2µH(Isat≥3.5A)；Cin 用 22µF 钽(项7要求≥10µF钽)；Cout 用 22µF 钽；R1(R13)=33.2k、R2(R14)=10k（1%）；Cboot(C26)=0.1µF 接 VBST(6)–SW(2)；EN(R15) 10k 上拉到 +5V。
+- 反馈分压（Equation 2，p.14）：Vout=0.768×(1+R1/R2)。代入 R1/R2=3.3/0.768−1=3.2969；取 R1=33.2k、R2=10k → **Vout=0.768×(1+3.32)=3.318V（+0.54%）**。电感纹波 ΔIL=Vout(Vin−Vout)/(Vin·L·fsw)=3.3×1.7/(5×2.2µH×580kHz)≈**0.879A**。
+- 网表：U1{1:GND,2:SW_NODE,3:+5V,4:VFB_NODE,5:EN_BUCK,6:VBST_NODE}；L1{1:SW_NODE,2:+3V3}；R13{+3V3,VFB_NODE}；R14{VFB_NODE,GND}；R15{+5V,EN_BUCK}；C26{VBST_NODE,SW_NODE}；+3V3 网含 L1.2。
+- 风险备注：TPS D-CAP2 原推荐低 ESR 陶瓷电容，本设计按项7改用钽电容（ESR 较高、容量加大），环路稳定性需实测确认。
+
+### 3. 麦克风（要求 top port + I2S）—— 未满足，保留现料，待鼠王决策
+- 经数据手册核实：现料 **C574021（ICS-43432，TDK InvenSense，SMD-7P）为 I2S 数字输出，但为「底进音 bottom port」，非正面开孔**；且原厂 **EOL**（DS-000038 Rev1.0，Figure 3/Table 6 p.8；TDK/InvenSense 页 Status=EOL）。
+- 立创无「top port + I2S + 有货 + 便宜」型号：MSM261S4030H0R、CMM-4030D-261-I2S 均停产/无货；SPH0645LM4H 亦为 bottom port。行业 I2S MEMS 正退场转 PDM。
+- 因此**本轮无法按「正面开孔」换料**，保留 C574021 及原 I2S 接线（未改动）：SCK(6)→GPIO4/I2S_MIC_BCLK；WS(5)→GPIO5/I2S_MIC_WS；SD(7)→GPIO6/I2S_MIC_SD；LR(1)→GND=左声道；CONFIG(2)→GND；VDD(3)→+3V3_A 并 0.1µF 去耦；GND(4)。**不伪造替代料**。
+- **请鼠王决策**：(A) 接受底进音 I2S + PCB 麦正下方开声孔（最现实、便宜有货）；或 (B) 改顶进音 PDM + PDM→I2S 桥接/固件（更复杂）。
+
+### 4. 功放：删 FB2/FB3/C12/C13，U4 OUTP/OUTN 直连 J2 —— 已落实
+- 已删除 FB2、FB3、C12、C13（连同其短导线与网络标签）。U4 OUTP(9)→**SPK_P**→J2.1；OUTN(10)→**SPK_N**→J2.2。网表：U4.9=SPK_P=J2.1，U4.10=SPK_N=J2.2；FB2/FB3/C12/C13 已不存在。
+
+### 5. 按键：删 TVS1–TVS9，每键 100nF 到 GND —— 已落实
+- 已删除 TVS1–TVS9（连同其短导线/网络标签）；每键新增 **C17–C25 = 100nF/0603（C14663）** 到 GND。网表 KEY1–9 = {ESP32 GPIO, Kn.1, Cn.1}；各 Cn{1:KEYn,2:GND}。
+
+### 6. 淘宝自采件（BOM 标注）—— 已落实
+- BOM_v0.7 中 J1、J2、K1–K9、SW1/SW2 **标「淘宝自采」**，不列立创料号/单价/库存；J1/J2/K1–K9 已换好的库器件保持不动；SW1/SW2 保留现有符号与封装（不再追 C56165515）。**TP1/TP2 保持 DNP**。另按要求 TPS 芯片(U1)与电感(L1)亦标「淘宝自采」。
+
+### 7. 电容：所有 ≥10µF 一律钽电容（禁电解）—— 已落实
+- 全部 ≥10µF 改为 **C782264（CA45-A-16V-22uF-K，22µF/16V，CASE-A 钽）**：C1、C5、C7、C10、C15（原 10µF 陶瓷）+ C4（原已钽）+ TPS 外围 C27(Cin)、C28(Cout)。耐压：+5V/VBUS 用 16V≥2×5V；+3V3 用 16V≥2×3.3V，满足「工作电压 2 倍以上」。
+- 极性核对（网表）：每颗 pin1(正)→电源网、pin2(负)→GND：
+  - C1{1:+5V,2:GND}、C5{1:VBUS_IN,2:GND}、C10{1:+5V,2:GND}、C27{1:+5V,2:GND}、C7{1:+3V3_A,2:GND}、C15{1:+3V3,2:GND}、C28{1:+3V3,2:GND}、C4{1:+3V3,2:GND}。全部正确。
+- 局部放大证据 PNG：tant_C1_C3_C4_zoom_v07.png、tant_C5_zoom_v07.png、tant_C7_zoom_v07.png、tant_C10_zoom_v07.png、tant_C15_zoom_v07.png、tant_C27_zoom_v07.png、tant_C28_zoom_v07.png。
+
+### 交付与限制
+- ERC：error 0；warn 5 条（NETOBJECTONGRID×4 + ATTRMATCHCODE×10器件/1记录），逐条解释见 erc_all_report.txt。
+- BOM_v0.7：立创部分合计约 **¥76.26**（USD×7.2 估算）< ¥100；淘宝自采件不计价；D1/R3/TP 单价待确认。
+- **.epro 限制**：当前安装的嘉立创 EDA（V4.1.100）jlceda MCP **未暴露单文件 .epro 工程导出 API**（getExportDocumentFile 仅支持 PDF/PNG/SVG；无项目打包函数，调用 EPRO 一律超时）。故本轮交付的 mini_autotune_v0.7_*.epro 为**当前 .eprj3 设计文件夹的 ZIP 归档**（解压后为文件夹工程）；如需规范单文件 .epro，请在 GUI「文件→导出」生成。PDF/四页PNG/网表/BOM 均由 API 正常导出。
+
+
