@@ -28,3 +28,23 @@
 - 规格书 p.2 极性图：pin1=B-、2=B+、3=R-、4=R+、5=G-、6=G+（共阴）。阴极 1/3/5→GND；阳极 4/6/2 经限流到 GPIO38/39/40。
 - 因三色阴极独立引出，**同一颗料也可改为：阳极接 +5V、阴极经限流电阻接 GPIO（开漏/低电平点亮）**——供工程师在绿/蓝 3.3V 余量不足时选择。
 - 绿/蓝 Vf_max 3.6V>3.3V，3.3V 下余量不足（前已记）。LED 符号引脚非 10 栅格（±19/21），导出标签已对齐，评审知悉。
+
+## 阶段C 全局检查（2026-11-18）
+- 全局 ERC：error 0；warn 4（NETOBJECTONGRID，LED1 引脚非栅格，非电气）。详见 hw/exports/erc_all_report.txt。
+- 网表 GPIO 对照（U2 引脚→网络，均与 SCHEMATIC_PLAN §3.2 一致）：
+| 信号 | GPIO | U2脚 | 网络 | | 信号 | GPIO | U2脚 | 网络 |
+|---|---|---|---|---|---|---|---|---|
+| I2S_MIC_BCLK | 4 | 4 | I2S_MIC_BCLK | | KEY1 | 10 | 18 | KEY1 |
+| I2S_MIC_WS | 5 | 5 | I2S_MIC_WS | | KEY2 | 11 | 19 | KEY2 |
+| I2S_MIC_SD | 6 | 6 | I2S_MIC_SD | | KEY3 | 12 | 20 | KEY3 |
+| I2S_AMP_BCLK | 7 | 7 | I2S_AMP_BCLK | | KEY4 | 13 | 21 | KEY4 |
+| I2S_AMP_LRC | 8 | 12 | I2S_AMP_LRC | | KEY5 | 14 | 22 | KEY5 |
+| I2S_AMP_DIN | 9 | 17 | I2S_AMP_DIN | | KEY6 | 15 | 8 | KEY6 |
+| USB_DM | 19 | 13 | USB_DM | | KEY7 | 16 | 9 | KEY7 |
+| USB_DP | 20 | 14 | USB_DP | | KEY8 | 17 | 10 | KEY8 |
+| RGB_R | 38 | 31 | RGB_R | | KEY9 | 18 | 11 | KEY9 |
+| RGB_G | 39 | 32 | RGB_G | | AMP_SD | 41 | 34 | AMP_SD |
+| RGB_B | 40 | 33 | RGB_B | | BOOT | 0 | 27 | BOOT |
+| U0TXD | 43 | 37 | U0TXD | | U0RXD | 44 | 36 | U0RXD |
+- 禁止区 GPIO3 / 26–37 / 45 / 46：网表中**无任何连接**（NC），确认符合 §3.2。
+- 位号全局唯一：61 个器件无重复；R_R/R_G/R_B 已改为 R10/R11/R12。
