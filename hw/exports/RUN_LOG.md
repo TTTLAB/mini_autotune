@@ -247,3 +247,41 @@
 ### Not tried / 未验证
 - ERC 明细：headless 取不到（同上 G1.4）→ **待鼠王在可见窗口跑 DRC**，不声称 error 0。
 - 一致性手册级深度核对：**未完成**（无联网），见 consistency_summary_G15.md；建议联网后独立实例补做。
+
+## G1.6 落实（2026-11-18，分支 g1.4，基线 f7ba23e）
+
+### 步骤0 备份
+- mini_autotune.eprj3.bak_20261118-050139；sch 快照 sch_bak_g16_20261118-050139.tar.gz。单线程，未开并行子任务。
+
+### 步骤1 属性对齐（原位替换为立创库对应 C 号器件，位号/网络不变）
+- 电阻符号同为 R0603，replace 通过（R13 试替换成功，符号框无差）；R3 因原 C2889398 符号与外框不同，replace 被拒 → remove+add+短导线+网络标签（+3V3/+3V3_A），并补网络标签恢复连接。
+- 结果（前/后对照见 hw/exports/check/g16_attr_align.md）：
+  - R13 → C23003（33.2k，0603WAF3322T5E）；Description 由 2.2k 更正为 33.2k，Datasheet 由 0603WAF2201T5E 更正为 0603WAF3322T5E。
+  - R14/R15 → C25804（10k，0603WAF1002T5E）；Description 2.2k→10k，Datasheet 更正。
+  - R10/R11/R12 → C4190（2.2k，0603WAF2201T5E）；Datasheet 由 270Ω/62Ω 料更正为 0603WAF2201T5E。
+  - R3 → C22859（10Ω，0603WAF100JT5E）；原 C2889398 查不到。网络 +3V3 / +3V3_A 不变（网表核对 1=+3V3、2=+3V3_A）。
+  - SW1/SW2 → C56165515：系统库取不到对应器件（lib_Device.search 返回空），**记录并保留原样，不换料**；DeviceName TS-1088-AR03016 与制造商料号 XD-TS-1088R-02026 仍不一致（待系统库/人工修）。
+- 每组跑 tools/check.sh：check_g16_g1/g2/g3.md 均为 器件 +0/-0、引脚改动 0、网络 +0/-0（PNG：g1 0变、g2 1变、g3 1变，符合人机交互/音频页面可见变化）。
+- 属性复核（g16_attr_align.md）：电阻 R13–R15/R10–R12/R3 全部对齐；真实仍不一致仅 SW1/SW2（见上），其余为 LCSC 命名后缀/Datasheet 站内页，属正常。
+
+### 步骤2 D1（C252436）
+- 立创国内站可查：item.szlcsc.com/20914190.html 为 UMW USBLC6-4SC6；jlcpcb partdetail C252436 = Yenji Elec USBLC6-4SC6（有规格）。判定 **在售**，D1 保留，不替换；REVIEW_NOTES 已记「下单前复核品牌/库存」。未采用候选 C85364。
+
+### 步骤3 BOM v1.0
+- L1 备注：淘宝自采，2.2µH，2520 尺寸，Isat≥3A（封装名借用 VLS252012CX-150M 仅取 2.5×2.0mm）。
+- C14663/C45783/C5272786 备注「国际站库存0，下单前查国内站」。
+- 淘宝件（J1/J2/K1–9/SW/U1/U3/L1）不计价；立创合计（已知价）≈¥32.93（BOM_v1.0_20261118-050448.csv）。
+
+### 步骤4 REVIEW_NOTES 新增「待工程师确认」
+- +3V3 总标称电容约 76µF（C28/C29/C4/C15/C3/C16）> TPS563201 推荐 20–68µF（SLVSD90 Table 7-2）；偏压降容后可能落回；是否去掉 C4 或 C15，或打样实测负载阶跃。
+- LED 共阳 5V：复位期间 GPIO 高阻，固件应尽早把 RGB 三脚设为输出高。
+- C4 钽：PCB 阶段确认丝印「+」在 pad1。
+- U3 底进音：PCB 声孔 ≥0.5mm（DS-000069 p.17）。
+
+### 收尾导出 v1.0
+- BOM_v1.0_20261118-050448.csv；四页 PNG（power/main/audio/hmi_page_v10.png）；PDF（mini_autotune_v1.0_20261118-0505.pdf）；.epro 设计文件夹 ZIP（mini_autotune_v1.0_20261118-0505.epro.zip）；替换件放大图 zoom_g16_R13_R14_R15 / zoom_g16_R10_R11_R12 / zoom_g16_R3 / zoom_g16_SW1 / zoom_g16_SW2（均含位号与值）。
+
+### Not tried / 未验证
+- ERC 明细：headless 取不到 → **待鼠王在可见窗口跑 DRC**，不声称 error 0。ATTRMATCHCODE 警告是否随属性对齐消失：headless 无法读 DRC 明细，**未能确认**。
+- SW1/SW2 真实属性不一致（系统库无器件）：未修，记录待人工/系统库。
+- 电容等仍按「已知价」；C15850/C22859/C252436/C45783/TP 单价待确认。

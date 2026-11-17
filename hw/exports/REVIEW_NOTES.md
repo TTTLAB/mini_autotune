@@ -179,3 +179,23 @@
 - BOM：U3 标淘宝、不计立创价；立创合计（已知价）≈¥32.93（C15850×5/C45783×3/D1/R3/TP/L1 单价待确认未计入）。
 - 一致性：仅复核 55 个 UNSURE 件；**子任务无 web 权限**，手册级全 UNSURE；本地机械核对 FAIL=0，见 consistency_summary_G15.md / consistency_local_all.md。
 - 遗留：ERC 明细待鼠王可见窗口 DRC；手册级深度核对待联网补做。
+
+## G1.6 落实（2026-11-18）
+
+### 属性对齐（步骤1）
+- R13→C23003(33.2k)、R14/R15→C25804(10k)、R10/R11/R12→C4190(2.2k)、R3→C22859(10Ω，原 C2889398 查不到)；DeviceName/Description/Datasheet 已随 C 号对齐，位号与网络不变（对照表 hw/exports/check/g16_attr_align.md）。
+- R3 用 remove+add+网络标签（replace 被符号框容差拒）；其余电阻 replace 直接通过。
+- SW1/SW2 → C56165515：系统库取不到器件，保留原样，DeviceName TS-1088-AR03016 与制造商料号 XD-TS-1088R-02026 仍不一致，待人工/系统库。
+
+### D1（步骤2）
+- C252436 在立创/JLC 可查（UMW/YenjiElec USBLC6-4SC6），判定在售，保留不换；下单前复核品牌库存。
+
+### 待工程师确认（步骤4）
+1. +3V3 总标称电容约 76µF（C28/C29/C4/C15/C3/C16）> TPS563201 推荐 20–68µF（SLVSD90 Table 7-2）；MLCC 偏压降容后可能落回范围；是否去掉 C4 或 C15，或打样实测负载阶跃。
+2. LED 共阳 5V：复位期间 GPIO 高阻，固件应尽早把 RGB 三脚设为输出高。
+3. C4 钽：PCB 阶段确认丝印「+」在 pad1。
+4. U3 底进音：PCB 声孔 ≥0.5mm（DS-000069 p.17）。
+
+### 其他
+- BOM v1.0：L1 淘宝(2.2µH/2520/Isat≥3A)；C14663/C45783/C5272786 国际站库存0 提示；淘宝件不计价；立创合计≈¥32.93(已知价)。
+- ERC 明细与 ATTRMATCHCODE：headless 取不到，待可见窗口 DRC，未确认。

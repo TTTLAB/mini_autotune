@@ -298,3 +298,23 @@ AI 提交评审包
 
 - 预审 Claude B（待指派）；终审 工程师朋友（待）。遗留：ERC 明细、C15850/C45783 等单价待确认、C5656610 供货（停产标记）。未开始 PCB。
 
+
+## G1.6 落实（RV-G1-004，2026-11-18，分支 g1.4，基线 f7ba23e）
+
+| # | 要求 | 落实 | 证据 |
+|---|---|---|---|
+| 1 | R13→C23003(33.2k) 属性对齐 | 已 replace，Desc/DS 更正 | g16_attr_align.md / check_g16_g1.md |
+| 2 | R14/R15→C25804(10k) | 已 replace | 同上 |
+| 3 | R10→C4190(2.2k) | 已 replace | check_g16_g2.md |
+| 4 | R11/R12→C4190(2.2k) | 已 replace | 同上 |
+| 5 | SW1/SW2→C56165515（取不到则留） | 系统库取不到，保留并记录不一致 | REVIEW_NOTES |
+| 6 | R3→C22859(10Ω)，网络不变 | remove+add+网络标签 | check_g16_g3.md |
+| 7 | 每基跑 check.sh，引脚网络零变化 | 三组均 器件+0/-0、引脚0、网络0 | check_g16_g1/2/3.md |
+| 8 | 属性复核列仍不一致 | 仅 SW1/SW2 | g16_attr_align.md |
+| 9 | D1 国内站在售核查 | 在售(UMW/YenjiElec)，保留 | REVIEW_NOTES |
+| 10 | BOM v1.0（L1/低库存/淘宝/重算） | 已出，立创合计≈¥32.93 | BOM_v1.0_20261118-050448.csv |
+| 11 | 待工程师确认 4 条 | 已写 | REVIEW_NOTES G1.6 |
+| 12 | ERC/ATTRMATCHCODE | headless 取不到，待可见窗口 DRC，不声称 error0 | Not tried |
+| 13 | 导出 v1.0（BOM/四页PNG/PDF/epro/放大图） | 已导出 | hw/exports/*_v10* / BOM_v1.0 / .pdf / .epro.zip / zoom_g16_* |
+
+- 预审 Claude B（待）；终审 工程师朋友（待）。遗留：SW1/SW2 属性、ERC 明细、单价待确认、C5656610 供货。未开始 PCB。
