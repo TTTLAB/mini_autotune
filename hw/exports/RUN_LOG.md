@@ -66,3 +66,8 @@
 - 按键换 TS-1809-T20(C9900021414, 2脚 pin1左/pin2右)；K1–K9 竖向一列、键距 60(6格)；TVSn=BNESD9X5.0ST5G(C19077972) 置于键旁；每脚短线20+网络标签，pin1左标KEYn、pin2右标GND，全部端点/标签在10栅格。HMI ERC 相关条目 0。
 - 网表(PADS)证据：KEY1={U2.18,K1.1,TVS1.1}; KEY2={U2.19,K2.1,TVS2.1}; KEY3={U2.20,K3.1,TVS3.1}; KEY4={U2.21,K4.1,TVS4.1}; KEY5={U2.22,K5.1,TVS5.1}; KEY6={U2.8,K6.1,TVS6.1}; KEY7={U2.9,K7.1,TVS7.1}; KEY8={U2.10,K8.1,TVS8.1}; KEY9={U2.11,K9.1,TVS9.1}。
 - 导出 hmi_page_keys.png。
+
+## 2026-11-18 步骤B2 完成（LED 占位）
+- LED1(GL5050RGB01-A/C51933351) 已放置、引脚暂不接线（引脚映射待规格书封装图确认，见 REVIEW_NOTES）。
+- R_R/R_G/R_B 已放置：一端网络标签 RGB_R/RGB_G/RGB_B（=GPIO38/39/40，与主控页 U2 网络同名连接），另一端悬空待 LED 接线。
+- HMI 残余 ERC：CHECKFLOATPIN×1（LED1 各脚 + 电阻悬空端，属“LED 待接线”，按规则不算失败）。全局 ERC 仅此 1 条。
