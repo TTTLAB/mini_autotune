@@ -9,3 +9,8 @@
 - +3V3_A = +3V3 经 R3 10Ω + C7 10µF + C8 100nF。
 - MAX98357A(C910544)：VDD→+5V 就近 C10 10µF + C11 100nF；GAIN 经 R5 100k→VDD（3dB）；SD_MODE 由 AMP_SD 经 R6 10k / R7 22k 分压→2.27V>1.4V；OUT± 经 FB2/FB3 磁珠 + C12/C13 1nF 到 J2(PH2.0-2P)。
 - **已知未完成**：SD_MODE 仍有 1 条网络重名(ONENETNAME)未合并；输出滤波数值数据手册无明确值(待确认)。
+
+## 阶段3 追加（SD_MODE 修复与复算）
+- 已消除音频页 SD_MODE 与 GAIN/+5V/GND 的短路（根因为 R5 贯通线，删除后全页改为短线+网络标签）。
+- SD_MODE 分压：R6=10k、R7=22k、MAX98357A SD_MODE 内部下拉约100kΩ(Datasheet p.7/p.18)，R7∥100k=18.03k，V=2.12V>1.4V（开）；AMP_SD=0 时 0V（关）。
+- 输出磁珠+电容具体值数据手册未给明确值 → 待工程师确认。
