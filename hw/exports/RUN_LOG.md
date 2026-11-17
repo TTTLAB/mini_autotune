@@ -25,3 +25,8 @@
 ## 数据手册引用（阶段3）
 - ICS-43432 Datasheet，Document DS-000038 Rev1.0，**Page 8 of 20（TABLE 6 PIN FUNCTION DESCRIPTIONS）**：`2 CONFIG Input Pull to ground. The state of this pin is used at power-up.`；`3 VDD Power, 1.62 to 3.63 V ... decoupled to GND with a 0.1 μF capacitor.`；`7 SD ... 100 kΩ pull down resistor ...`；`1 LR ... When set low ... left channel ...`
 - MAX98357A Datasheet（ADI）：GAIN 引脚 100kΩ→VDD = 3 dB（Gain Settings / ADI 设计笔记 GAIN_SLOT 表）；SD_MODE 绝对阈值 B2≈1.4 V（>1.4V=左声道），5V 供电时 3.3 V 逻辑兼容（Datasheet p.7/p.18）。SD_MODE 分压：AMP_SD(3.3V) 经 R6=10k、R7=22k 下拉 → 3.3×22/(10+22)=2.27 V > 1.4 V（开），AMP_SD=0 时 0 V（关）。输出滤波磁珠+电容的具体数值**数据手册未给明确值 → 待确认**。
+
+## 2026-11-18 续跑（步骤A）
+- 步骤A 修音频页 SD_MODE ONENETNAME：连续 4 次尝试（重连后重画 SD_MODE 网、改名 AMP_SDMODE、改走线避让 R5/电源网络），DRC 仍报 ONENETNAME，且新走线反复与 GAIN / +5V / GND 网络合并（音频页布局过密、走线空间不足）。按「同一工具/同一问题连续多次未清除」停在步骤 A。
+- 步骤 B–E 未开始。
+- 数据手册：MAX98357A SD_MODE 内部下拉约 100kΩ（见 ds-pins 核查，Datasheet p.7/p.18）；分压重算：R7=22k ∥ 内部100k = 18.03k，V=3.3×18.03/(10+18.03)=2.12V>1.4V（若 AMP_SD=3.3V）。输出滤波磁珠+电容具体值数据手册未给明确值 → 待工程师确认。
