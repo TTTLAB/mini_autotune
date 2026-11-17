@@ -205,3 +205,9 @@
 - 待确认（阻塞定稿）：① 候选板框 80×50mm（≤80×50 目标；WORKFLOW 上限 85.60×53.98）是否采纳；② 接口朝向（J1 USB-C / J2 喇叭口 / 按键正面）；③ 8 条关键规则的手册页码（本地 PDF 不全，均标「页码待确认」）；④ SW1/SW2 实物型号；⑤ ESP32 天线具体净空值（以模组手册为准）。
 - 过程受阻：headless jlceda 的 importChanges 返回 ok 但 0 器件，原理图→PCB 同步未能自动完成；需工程师在可见窗口执行「从原理图导入变更」，再按 PCB_PLAN.md 分区粗摆放。
 - 未验证：PCB 顶层/底层 PNG、3D、DRC 均未产出（见 RUN_LOG P1「Not tried」）。
+
+## P1 更新（2026-11-18 执行结果）
+- 已在 PCB2（66 件，无 TVS，含 C17–C30）按 80×50mm 板框、四区粗摆放，未走线；顶/底层 PNG：hw/exports/pcb/pcb2_top_v1_2026111722143.png、pcb2_bottom_v1_2026111722143.png。**布局待工程师确认。**
+- 布局在 headless 副本 ~/Documents/LCEDA-Pro/projects/mini_autotune_p1/mini_autotune/（正式工程 PCB2 未回写，避免与可见窗口争用）。
+- 待确认：板框 80×50 与接口朝向定稿、8 条规则手册页码、ESP32 天线净空值、SW1/SW2 实物型号。
+- 未验证：DRC 明细、3D、底层位号（全贴片顶层无底层位号）。

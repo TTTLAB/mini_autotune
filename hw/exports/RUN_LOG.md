@@ -322,3 +322,17 @@
 2. 原理图→PCB 同步（importChanges）headless 不可用，详见步骤2；需鼠王在可见窗口用「从原理图导入变更」或在 GUI 跑一次。
 3. PCB 顶层/底层 PNG、3D 预览（RayTracer）、DRC 明细：均未产出。
 4. 板框尺寸、接口朝向、SW1/SW2 实物型号：待鼠王/工程师确认，未定稿。
+
+## P1 执行（2026-11-18 续，分支 p1-layout，基线 26b5f19）
+本轮：鼠王在可见窗口把「从原理图导入变更」落到磁盘工程的 **Board2/PCB2**（PCB1 仍空）并保存；DSH 全程 headless、未碰可见窗口。
+- 只读核对（磁盘 pcb/PCB2.epcb2，mtime 06:08:21）：COMPONENT=66、Designator=66、NET=44、PAD_NET=225；位号 66 个，**无 TVS**、FB1 单只、含 **C17–C30** → 与 G1 v1.0 原理图 66 件一致。
+- headless 打开：因磁盘文件夹工程被可见窗口占用，DSH 用 SYS_FileManager.getProjectFile 导出当前工程为 .epro2，再 importProjectByProjectFile（extUuid=eda，fileFormat='eprj3'）生成独立副本 ~/Documents/LCEDA-Pro/projects/mini_autotune_p1/mini_autotune/，headless 打开该副本核对 **PCB2 getAll()=66**、含 C17–C30、无 TVS、tabs 出现 PCB2。
+- 布局：80×50mm 板框（BOARD_OUTLINE 层折线）；按 PCB_PLAN 四区粗摆放 66 件（电源18/主控6/音频16/交互26），器件外廓 bbox≈(2.9,3.2)–(75.4,47.5)mm，均在板框内；**未走线**。已 pcb_Document.save()。
+- 导出：hw/exports/pcb/pcb2_top_v1_2026111722143.png（顶层，含位号）、pcb2_bottom_v1_2026111722143.png（底层铜/焊盘；全贴片顶层故底层无位号）。用 DMT_EditorControl.getCurrentRenderedAreaImage + SYS_FileSystem.saveFileToFileSystem（extUuid=eda）落盘。
+- 手册：网络下载 hw/datasheets/{tps563201.pdf(1.5MB), esp32-s3-wroom-1.pdf(1.3MB), ics-43434.pdf(114KB)}。
+- 说明：正式工程 ~/.../projects/mini_autotune/pcb/PCB2.epcb2 未被本步覆盖（被可见窗口占用、跨区写需审批且会争用）；布局结果在副本 mini_autotune_p1 与上述 PNG 中。
+
+### Not tried / 未验证（P1 续）
+1. 手册页码：已下载完整 PDF，但 headless 无 PDF 文本引擎（pdftotext/pypdf 不可用、纯 py 提取对 TI/InvenSense CID 字体失败）→ 8 条规则页码仍「待确认」；天线净空值待模组手册核对。
+2. 正式工程 PCB2 文件级回写：未做（避免与可见窗口争用）。
+3. DRC 明细 / 3D（RayTracer）：未产出。底层 PNG 无位号（全贴片顶层，物理如此）。
